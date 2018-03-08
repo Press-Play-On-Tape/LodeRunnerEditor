@@ -1,0 +1,10 @@
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\bin\Debug\LodeRunner.exe.config
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\bin\Debug\LodeRunner.exe
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\bin\Debug\LodeRunner.pdb
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\obj\Debug\LodeRunner.csprojResolveAssemblyReference.cache
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\obj\Debug\LodeRunner.Form1.resources
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\obj\Debug\LodeRunner.Properties.Resources.resources
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\obj\Debug\LodeRunner.csproj.GenerateResource.Cache
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\obj\Debug\LodeRunner.csproj.CoreCompileInputs.cache
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\obj\Debug\LodeRunner.exe
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\obj\Debug\LodeRunner.pdb
