@@ -45,3 +45,7 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+obj/Debug/LodeRunner.csproj.CoreCompileInputs.cache
+*.cache
+obj/Debug/LodeRunner.csproj.CoreCompileInputs.cache
+*.Cache

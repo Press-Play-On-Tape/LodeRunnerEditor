@@ -27,6 +27,8 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Level 1");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Level 2");
             this.imgBlocks = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.pic000 = new System.Windows.Forms.Panel();
@@ -477,12 +479,14 @@
             this.pic19F = new System.Windows.Forms.Panel();
             this.pic1AF = new System.Windows.Forms.Panel();
             this.pic1BF = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.Panel4 = new System.Windows.Forms.Panel();
-            this.panel5 = new System.Windows.Forms.Panel();
-            this.panel6 = new System.Windows.Forms.Panel();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuLoad = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lstLevels = new System.Windows.Forms.ListView();
+            this.dgOpenMapData = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // imgBlocks
@@ -4090,64 +4094,74 @@
             this.pic1BF.Size = new System.Drawing.Size(20, 22);
             this.pic1BF.TabIndex = 895;
             // 
-            // panel2
+            // menuStrip1
             // 
-            this.panel2.BackColor = System.Drawing.Color.Yellow;
-            this.panel2.Location = new System.Drawing.Point(312, 417);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(24, 26);
-            this.panel2.TabIndex = 450;
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.helpToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(834, 24);
+            this.menuStrip1.TabIndex = 457;
+            this.menuStrip1.Text = "menuStrip1";
             // 
-            // panel3
+            // fileToolStripMenuItem
             // 
-            this.panel3.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.panel3.Location = new System.Drawing.Point(342, 417);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(24, 26);
-            this.panel3.TabIndex = 451;
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuLoad});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "&File";
             // 
-            // Panel4
+            // mnuLoad
             // 
-            this.Panel4.Location = new System.Drawing.Point(455, 417);
-            this.Panel4.Margin = new System.Windows.Forms.Padding(0);
-            this.Panel4.Name = "Panel4";
-            this.Panel4.Size = new System.Drawing.Size(20, 22);
-            this.Panel4.TabIndex = 453;
+            this.mnuLoad.Name = "mnuLoad";
+            this.mnuLoad.Size = new System.Drawing.Size(100, 22);
+            this.mnuLoad.Text = "&Load";
+            this.mnuLoad.Click += new System.EventHandler(this.mnuLoad_Click);
             // 
-            // panel5
+            // helpToolStripMenuItem
             // 
-            this.panel5.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel5.BackgroundImage")));
-            this.panel5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel5.Location = new System.Drawing.Point(540, 417);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(20, 22);
-            this.panel5.TabIndex = 455;
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "&Help";
             // 
-            // panel6
+            // lstLevels
             // 
-            this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel6.Location = new System.Drawing.Point(618, 174);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(49, 77);
-            this.panel6.TabIndex = 456;
+            this.lstLevels.HideSelection = false;
+            this.lstLevels.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1,
+            listViewItem2});
+            this.lstLevels.Location = new System.Drawing.Point(582, 49);
+            this.lstLevels.Name = "lstLevels";
+            this.lstLevels.Size = new System.Drawing.Size(151, 308);
+            this.lstLevels.TabIndex = 458;
+            this.lstLevels.UseCompatibleStateImageBehavior = false;
+            this.lstLevels.View = System.Windows.Forms.View.List;
+            this.lstLevels.SelectedIndexChanged += new System.EventHandler(this.lstLevels_SelectedIndexChanged);
+            // 
+            // dgOpenMapData
+            // 
+            this.dgOpenMapData.Filter = "MapData (*.h)|*.h";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(690, 498);
-            this.Controls.Add(this.panel6);
-            this.Controls.Add(this.panel5);
-            this.Controls.Add(this.Panel4);
-            this.Controls.Add(this.panel3);
-            this.Controls.Add(this.panel2);
+            this.ClientSize = new System.Drawing.Size(834, 501);
+            this.Controls.Add(this.lstLevels);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.panel1.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -4602,15 +4616,16 @@
         private System.Windows.Forms.Panel pic19F;
         private System.Windows.Forms.Panel pic1AF;
         private System.Windows.Forms.Panel pic1BF;
-        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel Panel1;
-        private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel Panel2;
         private System.Windows.Forms.Panel Panel3;
-        private System.Windows.Forms.Panel Panel4;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.Panel panel5;
-        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ListView lstLevels;
+        private System.Windows.Forms.ToolStripMenuItem mnuLoad;
+        private System.Windows.Forms.OpenFileDialog dgOpenMapData;
     }
 }
 

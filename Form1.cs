@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,31 +19,6 @@ namespace LodeRunner
 
         private const int WIDTH = 14;
         private const int HEIGHT = 16;
-        private const int ENCRYPTION_TYPE_RLE_ROW = 0;
-        private const int ENCRYPTION_TYPE_RLE_COL = 1;
-        private const int ENCRYPTION_TYPE_GRID = 2;
-
-        enum LevelElement : int {
-
-            Blank,       // 0
-            Brick,       // 1
-            Solid,       // 2
-            Ladder,      // 3
-            Rail,        // 4
-            FallThrough, // 5
-            Gold,        // 6
-            Brick_1,     // 7
-            Brick_2,     // 8
-            Brick_3,     // 9
-            Brick_4,     // 10
-            Brick_Transition,  // 11
-            Brick_Close_1,  // 12
-            Brick_Close_2,  // 13
-            Brick_Close_3,  // 14
-            Brick_Close_4,  // 15
-  
-        };
-
 
         public Form1() {
             InitializeComponent();
@@ -128,14 +105,14 @@ namespace LodeRunner
         */
         private void Form1_Load(object sender, EventArgs e) {
 
-            loadLevel(new int[] { 0x00, 11, 39, 20, 101, 36, 18, 98, 7, 34, 16, 33, 97, 2, 65, 3, 65, 2, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 2, 65, 3, 65, 2, 34, 15, 33, 97, 4, 193, 4, 34, 16, 33, 97, 3, 193, 3, 34, 8, 97, 137, 98, 5, 34, 136, 98, 137, 98, 1, 33, 1, 33, 1, 34, 136, 98, 2, 193, 2, 193, 2, 193, 98, 1, 33, 1, 33, 1, 34, 2, 193, 2, 193, 2, 98, 9, 98, 1, 33, 1, 33, 1, 34, 8, 98, 9, 98, 1, 97, 1, 97, 1, 34, 8, 97, 76, 38, 0x4A, 0x00 });
+            //loadLevel(new int[] { 0x00, 11, 39, 20, 101, 36, 18, 98, 7, 34, 16, 33, 97, 2, 65, 3, 65, 2, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 2, 65, 3, 65, 2, 34, 15, 33, 97, 4, 193, 4, 34, 16, 33, 97, 3, 193, 3, 34, 8, 97, 137, 98, 5, 34, 136, 98, 137, 98, 1, 33, 1, 33, 1, 34, 136, 98, 2, 193, 2, 193, 2, 193, 98, 1, 33, 1, 33, 1, 34, 2, 193, 2, 193, 2, 98, 9, 98, 1, 33, 1, 33, 1, 34, 8, 98, 9, 98, 1, 97, 1, 97, 1, 34, 8, 97, 76, 38, 0x4A, 0x00 });
         }
 
         private void Form1_MouseClick(object sender, MouseEventArgs e) {
 
-        //    Control control = FindControlAtCursor(this);
+            //    Control control = FindControlAtCursor(this);
 
-         //   control = control;
+            //   control = control;
 
 
             String f = string.Format("{0} {1} ({2}) \n ", DateTime.Now.TimeOfDay.ToString(), e, sender.GetType().Name);
@@ -154,52 +131,12 @@ namespace LodeRunner
 
         }
 
-        private void loadLevel(int[] data) {
+        private void loadLevel(EncryptionType encryptionType, int[] data) {
 
             int dataOffset = 0;
             int goldLeft = 0;
 
-            /*
-            // Load player starting position ..
-
-            int playerX = data[dataOffset++];
-            int playerY = data[dataOffset++];
-
-
-            // Load enemies ..
-
-            int numberOfEnemies = data[dataOffset++];
-
-            for (int x = 0; x < numberOfEnemies; x++) {
-
-                //Enemy* enemy = &enemies[x];
-
-                //enemy->setId(x);
-
-                if (x < numberOfEnemies) {
-
-                    int xRebirth = data[dataOffset++];
-                    int yRebirth = data[dataOffset++];
-
-                }
-
-            }
-
-
-            // Load level ladder points ..
-
-            int levelLadderElementCount = data[dataOffset++];
-
-            for (int x = 0; x < levelLadderElementCount; x++) {
-
-                int xLadder = data[dataOffset++];
-                int yLadder = data[dataOffset++];
-
-            }
-            */
-            int encryptionType = data[dataOffset++];
-
-            if (encryptionType == ENCRYPTION_TYPE_GRID) {
+            if (encryptionType == EncryptionType.Grid) {
 
                 for (int y = 0; y < HEIGHT; y++) {
 
@@ -210,10 +147,10 @@ namespace LodeRunner
                         if (leftValue(element) == ((int)LevelElement.Gold)) { goldLeft++; }
                         if (rightValue(element) == ((int)LevelElement.Gold)) { goldLeft++; }
 
-                        pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[leftValue(element)];
-                        pictureBoxes[y, x].Tag = leftValue(element);
-                        pictureBoxes[y, x + 1].BackgroundImage = imgBlocks.Images[rightValue(element)];
-                        pictureBoxes[y, x + 1].Tag = rightValue(element);
+                        pictureBoxes[y, x * 2].BackgroundImage = imgBlocks.Images[leftValue(element)];
+                        pictureBoxes[y, x * 2].Tag = leftValue(element);
+                        pictureBoxes[y, (x * 2) + 1].BackgroundImage = imgBlocks.Images[rightValue(element)];
+                        pictureBoxes[y, (x * 2) + 1].Tag = rightValue(element);
 
                     }
 
@@ -238,7 +175,7 @@ namespace LodeRunner
 
                         for (int x = 0; x < run; x++) {
 
-                            if (encryptionType == ENCRYPTION_TYPE_RLE_ROW) {
+                            if (encryptionType == EncryptionType.RLE_Row) {
 
                                 int row = cursor / (WIDTH * 2);
                                 int col = (cursor % (WIDTH * 2));
@@ -272,6 +209,124 @@ namespace LodeRunner
 
             }
 
+
+        }
+
+        private void mnuLoad_Click(object sender, EventArgs e) {
+
+            bool inLevel = false;
+
+            if (dgOpenMapData.ShowDialog() == DialogResult.OK) {
+
+                const string userRoot = "HKEY_CURRENT_USER";
+                const string subkey = "LodeRunner";
+                const string keyName = userRoot + "\\" + subkey;
+                Registry.SetValue(keyName, "PathName", Path.GetDirectoryName(dgOpenMapData.FileName));
+
+                //                String[] lines = System.IO.File.ReadAllLines(dgOpenMapData.FileName);
+
+                using (FileStream fs = File.Open(dgOpenMapData.FileName, FileMode.Open))
+                using (BufferedStream bs = new BufferedStream(fs, System.Text.ASCIIEncoding.Unicode.GetByteCount("g")))
+                using (StreamReader sr = new StreamReader(bs)) {
+
+                    LevelDefinition levelDefinition = null;
+                    string line;
+                    while ((line = sr.ReadLine()) != null) {
+
+
+
+                        //                foreach (String line in lines) {
+
+                        if (line.StartsWith("const uint8_t PROGMEM")) {
+
+                            levelDefinition = new LevelDefinition();
+                            levelDefinition.LevelName = line.Substring(line.IndexOf("PROGMEM ") + 8, line.Length - line.IndexOf("PROGMEM ") - 14);
+                            inLevel = true;
+                        }
+                        else if (inLevel) {
+
+                            if (line == "};") {
+
+                                inLevel = false;
+                                ListViewItem item = new ListViewItem();
+                                item.Text = levelDefinition.LevelName;
+                                item.Tag = levelDefinition;
+                                lstLevels.Items.Add(item);
+
+                            }
+                            else {
+
+                                char[] splitchar = { ',' };
+                                String[] strData = line.Trim().Split(splitchar);
+                                
+                                int cursor = 0;
+
+
+                                // Player start pos ..
+
+                                CoordinateSet player = new CoordinateSet();
+                                player.X = Convert.ToInt32(strData[cursor++].Trim(), 16);
+                                player.Y = Convert.ToInt32(strData[cursor++].Trim(), 16);
+                                levelDefinition.Player = player;
+
+
+                                // Enemies
+
+                                int numberOfEnemies = Convert.ToInt32(strData[cursor++].Trim(), 16);
+
+                                for (int x = 0; x < numberOfEnemies; x++) {
+
+                                    CoordinateSet enemy = new CoordinateSet();
+                                    enemy.X = Convert.ToInt32(strData[cursor++].Trim(), 16);
+                                    enemy.Y = Convert.ToInt32(strData[cursor++].Trim(), 16);
+                                    levelDefinition.Enemies.Add(enemy);
+
+                                }
+
+
+                                // Level Ladders
+
+                                int numberOfLevelLadders = Convert.ToInt32(strData[cursor++].Trim(), 16);
+
+                                for (int x = 0; x < numberOfLevelLadders; x++) {
+
+                                    CoordinateSet levelLadder = new CoordinateSet();
+                                    levelLadder.X = Convert.ToInt32(strData[cursor++].Trim(), 16);
+                                    levelLadder.Y = Convert.ToInt32(strData[cursor++].Trim(), 16);
+                                    levelDefinition.Ladders.Add(levelLadder);
+
+                                }
+
+
+                                // Encryption type ..
+
+                                levelDefinition.setEncryptionType(Convert.ToInt32(strData[cursor++].Trim(), 16));
+                                int[] data = new int[strData.Length - cursor];
+
+                                for (int count = cursor; count <= strData.Length - 2; count++) {
+                                    data[count- cursor] = Convert.ToInt32(strData[count].Trim(), 16);
+                                }
+
+                                levelDefinition.Data = data;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        private void lstLevels_SelectedIndexChanged(object sender, EventArgs e) {
+
+            if (lstLevels.SelectedItems.Count > 0) {
+                LevelDefinition levelDefinition = (LevelDefinition)lstLevels.SelectedItems[0].Tag;
+                loadLevel(levelDefinition.EncryptionType, levelDefinition.Data);
+            }
 
         }
 
