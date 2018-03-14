@@ -43,6 +43,11 @@ namespace LodeRunner
             };
 
             initControlsRecursive(panel1.Controls);
+
+            pictureBox1.Parent = pic161;
+            pictureBox1.BackColor = Color.Transparent;
+            pictureBox1.Location = new System.Drawing.Point(0,0);
+
         }
 
         //private void HookEvents() {
@@ -333,4 +338,5 @@ namespace LodeRunner
     }
 
 }
+
 

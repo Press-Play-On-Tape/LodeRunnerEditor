@@ -27,8 +27,8 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Level 1");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Level 2");
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Level 1");
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Level 2");
             this.imgBlocks = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.pic000 = new System.Windows.Forms.Panel();
@@ -485,8 +485,10 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lstLevels = new System.Windows.Forms.ListView();
             this.dgOpenMapData = new System.Windows.Forms.OpenFileDialog();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // imgBlocks
@@ -4130,8 +4132,8 @@
             // 
             this.lstLevels.HideSelection = false;
             this.lstLevels.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2});
+            listViewItem7,
+            listViewItem8});
             this.lstLevels.Location = new System.Drawing.Point(582, 49);
             this.lstLevels.Name = "lstLevels";
             this.lstLevels.Size = new System.Drawing.Size(151, 308);
@@ -4144,11 +4146,22 @@
             // 
             this.dgOpenMapData.Filter = "MapData (*.h)|*.h";
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(463, 418);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(20, 22);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 529;
+            this.pictureBox1.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(834, 501);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.lstLevels);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
@@ -4160,6 +4173,7 @@
             this.panel1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -4626,6 +4640,7 @@
         private System.Windows.Forms.ListView lstLevels;
         private System.Windows.Forms.ToolStripMenuItem mnuLoad;
         private System.Windows.Forms.OpenFileDialog dgOpenMapData;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 
