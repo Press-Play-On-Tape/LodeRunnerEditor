@@ -21,15 +21,7 @@ namespace LodeRunner
         Rail,        // 4
         FallThrough, // 5
         Gold,        // 6
-        Brick_1,     // 7
-        Brick_2,     // 8
-        Brick_3,     // 9
-        Brick_4,     // 10
-        Brick_Transition,  // 11
-        Brick_Close_1,  // 12
-        Brick_Close_2,  // 13
-        Brick_Close_3,  // 14
-        Brick_Close_4,  // 15
+        Level_Ladder,
 
     };
 

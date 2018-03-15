@@ -60,6 +60,7 @@ namespace LodeRunner
             foreach (Control control in coll) {
 
                 control.MouseClick += ControlOnMouseClick;
+                control.KeyPress += ControKeyPress;
 
                 Padding margin = control.Margin;
                 margin.Left = 0;
@@ -85,7 +86,20 @@ namespace LodeRunner
             int x = int.Parse(name.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
             int y = int.Parse(name.Substring(5, 1), System.Globalization.NumberStyles.HexNumber);
 
-            pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[0];
+            pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[6];
+
+        }
+
+
+        private void ControKeyPress(object sender, KeyPressEventArgs e) {
+
+
+            String name = ((Panel)sender).Name;
+
+            int x = int.Parse(name.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
+            int y = int.Parse(name.Substring(5, 1), System.Globalization.NumberStyles.HexNumber);
+
+            pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[6];
 
         }
         /*
@@ -113,16 +127,6 @@ namespace LodeRunner
             //loadLevel(new int[] { 0x00, 11, 39, 20, 101, 36, 18, 98, 7, 34, 16, 33, 97, 2, 65, 3, 65, 2, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 2, 65, 3, 65, 2, 34, 15, 33, 97, 4, 193, 4, 34, 16, 33, 97, 3, 193, 3, 34, 8, 97, 137, 98, 5, 34, 136, 98, 137, 98, 1, 33, 1, 33, 1, 34, 136, 98, 2, 193, 2, 193, 2, 193, 98, 1, 33, 1, 33, 1, 34, 2, 193, 2, 193, 2, 98, 9, 98, 1, 33, 1, 33, 1, 34, 8, 98, 9, 98, 1, 97, 1, 97, 1, 34, 8, 97, 76, 38, 0x4A, 0x00 });
         }
 
-        private void Form1_MouseClick(object sender, MouseEventArgs e) {
-
-            //    Control control = FindControlAtCursor(this);
-
-            //   control = control;
-
-
-            String f = string.Format("{0} {1} ({2}) \n ", DateTime.Now.TimeOfDay.ToString(), e, sender.GetType().Name);
-            f = f;
-        }
 
         private int leftValue(int val) {
 
@@ -136,12 +140,12 @@ namespace LodeRunner
 
         }
 
-        private void loadLevel(EncryptionType encryptionType, int[] data) {
+        private void loadLevel(LevelDefinition levelDefinition, int[] data) {
 
             int dataOffset = 0;
             int goldLeft = 0;
 
-            if (encryptionType == EncryptionType.Grid) {
+            if (levelDefinition.EncryptionType == EncryptionType.Grid) {
 
                 for (int y = 0; y < HEIGHT; y++) {
 
@@ -152,10 +156,8 @@ namespace LodeRunner
                         if (leftValue(element) == ((int)LevelElement.Gold)) { goldLeft++; }
                         if (rightValue(element) == ((int)LevelElement.Gold)) { goldLeft++; }
 
-                        pictureBoxes[y, x * 2].BackgroundImage = imgBlocks.Images[leftValue(element)];
-                        pictureBoxes[y, x * 2].Tag = leftValue(element);
-                        pictureBoxes[y, (x * 2) + 1].BackgroundImage = imgBlocks.Images[rightValue(element)];
-                        pictureBoxes[y, (x * 2) + 1].Tag = rightValue(element);
+                        levelDefinition.Grid[y, x * 2] = (LevelElement)leftValue(element);
+                        levelDefinition.Grid[y, (x * 2) + 1] = (LevelElement)rightValue(element);
 
                     }
 
@@ -180,13 +182,12 @@ namespace LodeRunner
 
                         for (int x = 0; x < run; x++) {
 
-                            if (encryptionType == EncryptionType.RLE_Row) {
+                            if (levelDefinition.EncryptionType == EncryptionType.RLE_Row) {
 
                                 int row = cursor / (WIDTH * 2);
                                 int col = (cursor % (WIDTH * 2));
 
-                                pictureBoxes[row, col].BackgroundImage = imgBlocks.Images[block];
-                                pictureBoxes[row, col].Tag = leftValue(block);
+                                levelDefinition.Grid[row, col]= (LevelElement)block;
 
                             }
                             else {
@@ -194,8 +195,7 @@ namespace LodeRunner
                                 int col = cursor / HEIGHT;
                                 int row = cursor % HEIGHT;
 
-                                pictureBoxes[row, col].BackgroundImage = imgBlocks.Images[block];
-                                pictureBoxes[row, col].Tag = leftValue(block);
+                                levelDefinition.Grid[row, col] = (LevelElement)block;
 
                             }
 
@@ -214,6 +214,14 @@ namespace LodeRunner
 
             }
 
+
+            // Map level ladders to grid ..
+
+            foreach (CoordinateSet levelLadder in levelDefinition.Ladders) {
+
+                levelDefinition.Grid[levelLadder.Y, levelLadder.X] = LevelElement.Level_Ladder;
+
+            }
 
         }
 
@@ -305,14 +313,14 @@ namespace LodeRunner
 
                                 // Encryption type ..
 
-                                levelDefinition.setEncryptionType(Convert.ToInt32(strData[cursor++].Trim(), 16));
+                                levelDefinition.EncryptionType = (EncryptionType)Convert.ToInt32(strData[cursor++].Trim(), 16);
                                 int[] data = new int[strData.Length - cursor];
 
                                 for (int count = cursor; count <= strData.Length - 2; count++) {
-                                    data[count- cursor] = Convert.ToInt32(strData[count].Trim(), 16);
+                                    data[count - cursor] = Convert.ToInt32(strData[count].Trim(), 16);
                                 }
 
-                                levelDefinition.Data = data;
+                                loadLevel(levelDefinition, data);
 
                             }
 
@@ -329,12 +337,396 @@ namespace LodeRunner
         private void lstLevels_SelectedIndexChanged(object sender, EventArgs e) {
 
             if (lstLevels.SelectedItems.Count > 0) {
+
                 LevelDefinition levelDefinition = (LevelDefinition)lstLevels.SelectedItems[0].Tag;
-                loadLevel(levelDefinition.EncryptionType, levelDefinition.Data);
+
+                for (int y = 0; y < 16; y++) {
+
+                    for (int x = 0; x < 28; x++) {
+
+                        pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)levelDefinition.Grid[y, x]];
+                        pictureBoxes[y, x].Tag = leftValue((int)levelDefinition.Grid[y, x]);
+
+                    }
+
+                }
+
             }
 
         }
 
+        /*
+        Function Return_Level(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
+
+            Dim rleRow As String
+            Dim rleCol As String
+            Dim rleNorm As String
+
+            rleRow = RLE_Row(xOffset, yOffset)
+            rleCol = RLE_Col(xOffset, yOffset)
+            rleNorm = RLE_Norm(xOffset, yOffset)
+
+
+            If Len(rleCol) < Len(rleRow) Then
+
+                rleRow = rleCol
+
+
+            End If
+
+
+            If Len(rleNorm) < Len(rleRow) Then
+
+                rleRow = rleNorm
+
+
+            End If
+
+
+            Return_Level = rleRow
+
+        End Function
+
+        Function RLE_Row(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
+
+            Dim output As String
+            Dim currentCell As Integer
+            Dim iCount As Integer
+            Dim enemyCount As Integer
+            Dim ladderCount As Integer
+            Dim x As Integer
+            Dim y As Integer
+            Dim reentryPoints As Integer
+
+
+            currentCell = Val(Cells(yOffset, xOffset).Value)
+            iCount = 0
+
+            output = Common(xOffset, yOffset)
+            output = output + "0x00, "
+
+            ' Map data ..
+
+            For y = 0 To 15
+
+               For x = 0 To 27
+
+                    If x<> 0 Or y <> 0 Then
+
+                        If Val(Cells(y + yOffset, x + xOffset).Value) <> currentCell Or iCount = 30 Then
+
+                            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((currentCell * 32) + iCount + 1, 2)) + ", "
+                            iCount = 0
+                            currentCell = Val(Cells(y + yOffset, x + xOffset).Value)
+
+                        Else
+                            iCount = iCount + 1
+                        End If
+
+
+                    End If
+
+
+                Next
+
+            Next
+
+
+            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((currentCell* 32) + iCount + 1, 2)) + ", 0x00"
+            RLE_Row = output
+
+        End Function
+        Function RLE_Col(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
+
+            Dim output As String
+            Dim currentCell As Integer
+            Dim iCount As Integer
+            Dim enemyCount As Integer
+            Dim ladderCount As Integer
+            Dim x As Integer
+            Dim y As Integer
+            Dim reentryPoints As Integer
+
+
+            currentCell = Val(Cells(yOffset, xOffset).Value)
+
+            iCount = 0
+
+            output = Common(xOffset, yOffset)
+            output = output + "0x01, "
+
+            ' Map data ..
+
+            For x = 0 To 27
+
+                For y = 0 To 15
+
+                    If x<> 0 Or y <> 0 Then
+
+                        If Val(Cells(y + yOffset, x + xOffset).Value) <> currentCell Or iCount = 30 Then
+
+                            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((currentCell * 32) + iCount + 1, 2)) + ", "
+                            iCount = 0
+                            currentCell = Val(Cells(y + yOffset, x + xOffset).Value)
+
+                        Else
+                            iCount = iCount + 1
+                        End If
+
+
+                    End If
+
+
+                Next
+
+            Next
+
+
+            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((currentCell* 32) + iCount + 1, 2)) + ", 0x00"
+            RLE_Col = output
+
+        End Function
+        Function RLE_Norm(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
+
+            Dim output As String
+            Dim currentCell As Integer
+            Dim iCount As Integer
+            Dim enemyCount As Integer
+            Dim ladderCount As Integer
+            Dim x As Integer
+            Dim y As Integer
+            Dim reentryPoints As Integer
+            Dim l As Integer
+            Dim r As Integer
+
+
+            currentCell = Val(Cells(yOffset, xOffset).Value)
+            iCount = 0
+
+            output = Common(xOffset, yOffset)
+            output = output + "0x02, "
+
+            ' Map data ..
+
+            For y = 0 To 15
+
+                For x = 0 To 27 Step 2
+
+                    l = Val(Cells(y + yOffset, x + xOffset).Value)
+                    r = Val(Cells(y + yOffset, x + xOffset + 1).Value)
+
+                    output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((l* 16) + r)) + ", "
+
+                Next
+
+            Next
+
+
+            RLE_Norm = output
+
+        End Function
+        Function Common(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
+
+            Dim output As String
+            Dim currentCell As Integer
+            Dim iCount As Integer
+            Dim enemyCount As Integer
+            Dim ladderCount As Integer
+            Dim x As Integer
+            Dim y As Integer
+            Dim reentryPoints As Integer
+
+
+            currentCell = Val(Cells(yOffset, xOffset).Value)
+            iCount = 0
+
+
+            ' Work out players starting position ..
+
+            For y = 0 To 15
+
+               For x = 0 To 27
+
+                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 50 Then
+
+                         output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(x, 2)) + ", "
+                         output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(y, 2)) + ", "
+
+                    End If
+
+
+                Next
+
+            Next
+
+
+            ' Work out number of enemies ..
+
+
+            enemyCount = 0
+
+            For y = 0 To 15
+
+               For x = 0 To 27
+
+                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 3 Then
+
+                        enemyCount = enemyCount + 1
+
+                    End If
+
+
+                Next
+
+            Next
+
+
+            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(enemyCount, 2)) + ", "
+
+
+            ' Add enemies ..
+
+            For y = 0 To 15
+
+               For x = 0 To 27
+
+                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 3 Then
+
+                        output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(x, 2)) + ", "
+                        output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(y, 2)) + ", "
+
+                    End If
+
+
+                Next
+
+            Next
+
+
+
+            ' Work out number of ladders ..
+
+
+            ladderCount = 0
+
+            For y = 0 To 15
+
+               For x = 0 To 27
+
+                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 23 Then
+
+                        ladderCount = ladderCount + 1
+
+                    End If
+
+
+                Next
+
+            Next
+
+
+            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(ladderCount, 2)) + ", "
+
+
+            ' Add ladders ..
+
+            For y = 0 To 15
+
+               For x = 0 To 27
+
+                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 23 Then
+
+                        output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(x, 2)) + ", "
+                        output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(y, 2)) + ", "
+
+                    End If
+
+
+                Next
+
+            Next
+
+
+            Common = output
+
+        End Function
+        */
+
+
+
+        private String Common(LevelDefinition levelDefinition) {
+
+
+            StringBuilder common = new StringBuilder();
+
+
+            // Player position ..
+
+            common.Append(levelDefinition.Player.X.ToString("X"));
+            common.Append(levelDefinition.Player.Y.ToString("X"));
+
+
+            // Number of Enemies ..
+
+            common.Append(levelDefinition.Enemies.Count.ToString("X"));
+
+            for (int x = 0; x < levelDefinition.Enemies.Count; x++) {
+
+                common.Append(levelDefinition.Enemies[x].X.ToString("X"));
+                common.Append(levelDefinition.Enemies[x].Y.ToString("X"));
+
+            }
+
+
+            // Work out number of ladders ..
+
+            int ladderCount = 0;
+
+            for (int y = 0; y < 16; y++) {
+
+                for (int x = 0; x < 28; x++) {
+
+                    if (levelDefinition.Grid[y, x] == LevelElement.Level_Ladder) {
+                        ladderCount++;
+                    }
+
+                }
+
+            }
+
+
+            for (int y = 0; y < 16; y++) {
+
+                for (int x = 0; x < 28; x++) {
+
+                    if (levelDefinition.Grid[y, x] == LevelElement.Level_Ladder) {
+                        common.Append(x.ToString("X"));
+                        common.Append(y.ToString("X"));
+                    }
+
+                }
+
+            }
+
+            return common.ToString();
+
+        }
+
+        private void Form1_MouseClick(object sender, MouseEventArgs e) {
+
+            //    Control control = FindControlAtCursor(this);
+
+            //   control = control;
+
+
+            String f = string.Format("{0} {1} ({2}) \n ", DateTime.Now.TimeOfDay.ToString(), e, sender.GetType().Name);
+            f = f;
+        }
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e) {
+
+            String f = string.Format("{0} {1} ({2}) \n ", DateTime.Now.TimeOfDay.ToString(), e, sender.GetType().Name);
+            f = f;
+        }
     }
 
 }

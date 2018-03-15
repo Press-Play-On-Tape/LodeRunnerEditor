@@ -27,8 +27,6 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Level 1");
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Level 2");
             this.imgBlocks = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.pic000 = new System.Windows.Forms.Panel();
@@ -486,6 +484,8 @@
             this.lstLevels = new System.Windows.Forms.ListView();
             this.dgOpenMapData = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -502,6 +502,7 @@
             this.imgBlocks.Images.SetKeyName(4, "Rail.png");
             this.imgBlocks.Images.SetKeyName(5, "Fallthrough.png");
             this.imgBlocks.Images.SetKeyName(6, "Gold.png");
+            this.imgBlocks.Images.SetKeyName(7, "LadderLevel.png");
             // 
             // panel1
             // 
@@ -4130,16 +4131,15 @@
             // 
             // lstLevels
             // 
+            this.lstLevels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
             this.lstLevels.HideSelection = false;
-            this.lstLevels.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem7,
-            listViewItem8});
             this.lstLevels.Location = new System.Drawing.Point(582, 49);
             this.lstLevels.Name = "lstLevels";
-            this.lstLevels.Size = new System.Drawing.Size(151, 308);
+            this.lstLevels.Size = new System.Drawing.Size(166, 327);
             this.lstLevels.TabIndex = 458;
             this.lstLevels.UseCompatibleStateImageBehavior = false;
-            this.lstLevels.View = System.Windows.Forms.View.List;
+            this.lstLevels.View = System.Windows.Forms.View.Details;
             this.lstLevels.SelectedIndexChanged += new System.EventHandler(this.lstLevels_SelectedIndexChanged);
             // 
             // dgOpenMapData
@@ -4156,11 +4156,24 @@
             this.pictureBox1.TabIndex = 529;
             this.pictureBox1.TabStop = false;
             // 
+            // panel5
+            // 
+            this.panel5.Location = new System.Drawing.Point(556, 420);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(38, 30);
+            this.panel5.TabIndex = 530;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Level";
+            this.columnHeader1.Width = 160;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(834, 501);
+            this.Controls.Add(this.panel5);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.lstLevels);
             this.Controls.Add(this.panel1);
@@ -4169,6 +4182,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.panel1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
@@ -4641,6 +4655,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuLoad;
         private System.Windows.Forms.OpenFileDialog dgOpenMapData;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
     }
 }
 
