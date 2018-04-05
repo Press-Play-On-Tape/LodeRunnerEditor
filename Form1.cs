@@ -16,11 +16,15 @@ namespace LodeRunner
     {
 
         private Panel[,] pictureBoxes;
+        private PictureBox[] picEnemies;
+        private PictureBox[] picReentryPoints;
+        private ToolStripMenuItem[] mnuLevelElements;
 
         private const int WIDTH = 14;
         private const int HEIGHT = 16;
 
         public Form1() {
+
             InitializeComponent();
 
             pictureBoxes = new Panel[16, 28] {
@@ -42,25 +46,20 @@ namespace LodeRunner
                 { pic00F, pic01F, pic02F, pic03F, pic04F, pic05F, pic06F, pic07F, pic08F, pic09F, pic0AF, pic0BF, pic0CF, pic0DF, pic0EF, pic0FF, pic10F, pic11F, pic12F, pic13F, pic14F, pic15F, pic16F, pic17F, pic18F, pic19F, pic1AF, pic1BF }
             };
 
-            initControlsRecursive(panel1.Controls);
+            picEnemies = new PictureBox[6] { picEnemy1, picEnemy2, picEnemy3, picEnemy4, picEnemy5, picEnemy6 };
+            picReentryPoints = new PictureBox[4] { picReentry1, picReentry2, picReentry3, picReentry4 };
+            mnuLevelElements = new ToolStripMenuItem[10] { mnuLevelItem_00, mnuLevelItem_01, mnuLevelItem_02, mnuLevelItem_03, mnuLevelItem_04, mnuLevelItem_05, mnuLevelItem_06, mnuLevelItem_07, mnuLevelItem_08, mnuLevelItem_09 };
 
-            pictureBox1.Parent = pic161;
-            pictureBox1.BackColor = Color.Transparent;
-            pictureBox1.Location = new System.Drawing.Point(0,0);
+            initControlsRecursive(pnlLevel.Controls);
+            mnuElementSelect.Tag = 1;
 
         }
-
-        //private void HookEvents() {
-        //    foreach (Control ctl in this.Controls) {
-        //        ctl.MouseClick += new MouseEventHandler(Form1_MouseClick);
-        //    }
-        //}
-
+       
         void initControlsRecursive(Control.ControlCollection coll) {
+
             foreach (Control control in coll) {
 
                 control.MouseClick += ControlOnMouseClick;
-                control.KeyPress += ControKeyPress;
 
                 Padding margin = control.Margin;
                 margin.Left = 0;
@@ -72,62 +71,19 @@ namespace LodeRunner
                 ((Panel)control).BorderStyle = BorderStyle.None;
                 ((Panel)control).BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
-                if (control.HasChildren)
-                    initControlsRecursive(control.Controls);
+                if (control.HasChildren) initControlsRecursive(control.Controls);
+
             }
-        }
-
-        private void ControlOnMouseClick(object sender, MouseEventArgs args) {
-            if (args.Button != MouseButtons.Left)
-                return;
-
-            String name = ((Panel)sender).Name;
-
-            int x = int.Parse(name.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
-            int y = int.Parse(name.Substring(5, 1), System.Globalization.NumberStyles.HexNumber);
-
-            pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[6];
-
-        }
 
 
-        private void ControKeyPress(object sender, KeyPressEventArgs e) {
+            foreach (Control control in picEnemies) {
 
+                control.MouseClick += ControlOnMouseClick;
 
-            String name = ((Panel)sender).Name;
-
-            int x = int.Parse(name.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
-            int y = int.Parse(name.Substring(5, 1), System.Globalization.NumberStyles.HexNumber);
-
-            pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[6];
-
-        }
-        /*
-        private Control FindControlAtPoint(Control container, Point pos) {
-            Control child;
-            foreach (Control c in container.Controls) {
-                if (c.Visible && c.Bounds.Contains(pos)) {
-                    child = FindControlAtPoint(c, new Point(pos.X - c.Left, pos.Y - c.Top));
-                    if (child == null) return c;
-                    else return child;
-                }
             }
-            return null;
+
         }
-
-        private Control FindControlAtCursor(Form form) {
-            Point pos = Cursor.Position;
-            if (form.Bounds.Contains(pos))
-                return FindControlAtPoint(form, form.PointToClient(pos));
-            return null;
-        }
-        */
-        private void Form1_Load(object sender, EventArgs e) {
-
-            //loadLevel(new int[] { 0x00, 11, 39, 20, 101, 36, 18, 98, 7, 34, 16, 33, 97, 2, 65, 3, 65, 2, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 1, 67, 1, 67, 1, 34, 15, 33, 97, 2, 65, 3, 65, 2, 34, 15, 33, 97, 4, 193, 4, 34, 16, 33, 97, 3, 193, 3, 34, 8, 97, 137, 98, 5, 34, 136, 98, 137, 98, 1, 33, 1, 33, 1, 34, 136, 98, 2, 193, 2, 193, 2, 193, 98, 1, 33, 1, 33, 1, 34, 2, 193, 2, 193, 2, 98, 9, 98, 1, 33, 1, 33, 1, 34, 8, 98, 9, 98, 1, 97, 1, 97, 1, 34, 8, 97, 76, 38, 0x4A, 0x00 });
-        }
-
-
+        
         private int leftValue(int val) {
 
             return val >> 4;
@@ -311,6 +267,17 @@ namespace LodeRunner
                                 }
 
 
+                                // Reentry points
+
+                                for (int x = 0; x < 4; x++) {
+
+                                    CoordinateSet reentryPoint = new CoordinateSet();
+                                    reentryPoint.X = Convert.ToInt32(strData[cursor++].Trim(), 16);
+                                    reentryPoint.Y = Convert.ToInt32(strData[cursor++].Trim(), 16);
+                                    levelDefinition.ReentryPoints.Add(reentryPoint);
+
+                                }
+
                                 // Encryption type ..
 
                                 levelDefinition.EncryptionType = (EncryptionType)Convert.ToInt32(strData[cursor++].Trim(), 16);
@@ -351,6 +318,76 @@ namespace LodeRunner
 
                 }
 
+
+                // Enemies ..
+
+                for (int x=0; x< 6; x++) {
+
+                    PictureBox picEnemy = picEnemies[x];
+
+                    if (x < levelDefinition.Enemies.Count) {
+
+                        CoordinateSet enemyCoords = levelDefinition.Enemies[x];
+                        picEnemy.Parent = pictureBoxes[enemyCoords.Y, enemyCoords.X];
+                        picEnemy.BackColor = Color.Transparent;
+                        picEnemy.Location = new System.Drawing.Point(0, 0);
+                        picEnemy.Visible = true;
+                        picEnemy.Tag = enemyCoords;
+
+                    }
+                    else {
+
+                        picEnemy.Visible = false;
+                        picEnemy.Tag = null;
+
+                    }
+
+                }
+
+
+                // Reentry Points ..
+
+                for (int x = 0; x < 4; x++) {
+
+                    PictureBox picReentryPoint = picReentryPoints[x];
+                    CoordinateSet reentryPointyCoords = levelDefinition.ReentryPoints[x];
+                    picReentryPoint.Tag = reentryPointyCoords;
+
+                    if (reentryPointyCoords.X > 0) {
+
+                        picReentryPoint.Parent = pictureBoxes[reentryPointyCoords.Y, reentryPointyCoords.X];
+                        picReentryPoint.BackColor = Color.Transparent;
+                        picReentryPoint.Location = new System.Drawing.Point(0, 0);
+                        picReentryPoint.Visible = true;
+
+                    }
+                    else {
+
+                        picReentryPoint.Visible = false;
+
+                    }
+
+                }
+
+
+                // Player starting point
+
+                CoordinateSet playerCoords = levelDefinition.Player;
+                picPlayer.Tag = playerCoords;
+
+                if (playerCoords.X > 0) {
+
+                    picPlayer.Parent = pictureBoxes[playerCoords.Y, playerCoords.X];
+                    picPlayer.BackColor = Color.Transparent;
+                    picPlayer.Location = new System.Drawing.Point(0, 0);
+                    picPlayer.Visible = true;
+
+                }
+                else {
+
+                    picPlayer.Visible = false;
+
+                }
             }
 
         }
@@ -726,6 +763,201 @@ namespace LodeRunner
 
             String f = string.Format("{0} {1} ({2}) \n ", DateTime.Now.TimeOfDay.ToString(), e, sender.GetType().Name);
             f = f;
+        }
+
+
+        private void ControlOnMouseClick(object sender, MouseEventArgs args) {
+
+            String name = "";
+            int x = -1;
+            int y = -1;
+
+            if (args.Button == MouseButtons.Left) {
+
+                if (sender is Panel) {
+
+                    name = ((Panel)sender).Name;
+                    x = int.Parse(name.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
+                    y = int.Parse(name.Substring(5, 1), System.Globalization.NumberStyles.HexNumber);
+                }
+                else if (sender is PictureBox) {
+
+                    name = ((PictureBox)sender).Name;
+                    CoordinateSet enemyCoordiantes = (CoordinateSet)((PictureBox)sender).Tag;
+                    x = enemyCoordiantes.X;
+                    y = enemyCoordiantes.Y;
+
+                }
+
+                switch ((LevelElement)mnuElementSelect.Tag) {
+
+                    case LevelElement.ReentryPoint:
+
+                        if (getCountOfLevelElements(LevelElement.ReentryPoint) > 4) {
+                            MessageBox.Show("A maximum of 4 re-entry points can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        break;
+
+                    case LevelElement.Level_Ladder:
+
+                        if (getCountOfLevelElements(LevelElement.Level_Ladder) > 18) {
+                            MessageBox.Show("A maximum of 18 escape ladders can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        break;
+
+                    case LevelElement.Enemy:
+
+                        int count = 0;
+
+                        foreach (PictureBox picEnemy in picEnemies) {
+
+                            if (picEnemy.Tag != null) {
+
+                                count++;
+
+                                CoordinateSet enemyPosition = (CoordinateSet)picEnemy.Tag;
+
+                                if (enemyPosition.X == x && enemyPosition.Y == y) {
+
+                                    picEnemy.Tag = null;
+                                    picEnemy.Visible = false;
+                                    return;
+
+                                }
+
+                            }
+
+                        }
+
+                        if (count == 6) {
+                            MessageBox.Show("A maximum of 6 enemies can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+
+                        }
+
+                        foreach (PictureBox picEnemy in picEnemies) {
+
+                            if (picEnemy.Tag == null) {
+
+                                picEnemy.Parent = pictureBoxes[y, x];
+                                picEnemy.BackColor = Color.Transparent;
+                                picEnemy.Location = new System.Drawing.Point(0, 0);
+                                picEnemy.Visible = true;
+
+                                CoordinateSet enemyCoords = new CoordinateSet();
+                                enemyCoords.X = x;
+                                enemyCoords.Y = y;
+                                picEnemy.Tag = enemyCoords;
+                                return;
+
+                            }
+
+                        }
+
+                        return;
+
+                    case LevelElement.Player:
+
+                        picPlayer.Parent = pictureBoxes[y, x];
+                        picPlayer.BackColor = Color.Transparent;
+                        picPlayer.Location = new System.Drawing.Point(0, 0);
+                        picPlayer.Visible = true;
+
+                        CoordinateSet playerCoords = new CoordinateSet();
+                        playerCoords.X = x;
+                        playerCoords.Y = y;
+                        picPlayer.Tag = playerCoords;
+
+                        return;
+
+                }
+
+
+                pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)mnuElementSelect.Tag];
+                pictureBoxes[y, x].Tag = (int)mnuElementSelect.Tag;
+
+            }
+            else {
+
+                mnuElementSelect.Show(Cursor.Position);
+
+            }
+            
+        }
+        
+        private void mnuLevelItem_Click(ToolStripMenuItem selectedItem, int index) {
+
+            foreach (ToolStripMenuItem item in mnuLevelElements) {
+
+                item.Checked = false;
+
+            }
+
+            selectedItem.Checked = true;
+            mnuElementSelect.Tag = index;
+
+        }
+
+        private void mnuLevelItem_00_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 0);
+        }
+
+        private void mnuLevelItem_01_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 1);
+        }
+
+        private void mnuLevelItem_02_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 2);
+        }
+
+        private void mnuLevelItem_03_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 3);
+        }
+
+        private void mnuLevelItem_04_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 4);
+        }
+
+        private void mnuLevelItem_05_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 5);
+        }
+
+        private void mnuLevelItem_06_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 6);
+        }
+
+        private void mnuLevelItem_07_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 7);
+        }
+        
+        private void mnuLevelItem_08_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 8);
+        }
+
+        private void mnuLevelItem_09_Click(object sender, EventArgs e) {
+            mnuLevelItem_Click((ToolStripMenuItem)sender, 9);
+        }
+
+        int getCountOfLevelElements(LevelElement levelElement) {
+
+            int count = 0;
+
+            for (int y = 0; y < 16; y++) {
+
+                for (int x = 0; x < 28; x++) {
+
+                    if ((int)pictureBoxes[y, x].Tag == (int)levelElement) count++;
+
+                }
+
+            }
+
+            return count;
+
         }
     }
 

@@ -13,6 +13,7 @@ namespace LodeRunner {
         CoordinateSet player = new CoordinateSet();
         List<CoordinateSet> enemies = new List<CoordinateSet>();
         List<CoordinateSet> ladders = new List<CoordinateSet>();
+        List<CoordinateSet> reentryPoints = new List<CoordinateSet>();
         EncryptionType encryptionType = EncryptionType.RLE_Row;
         LevelElement[,] grid = new LevelElement[16, 28];
 
@@ -24,7 +25,7 @@ namespace LodeRunner {
         public List<CoordinateSet> Ladders { get => ladders; set => ladders = value; }
         public EncryptionType EncryptionType { get => encryptionType; set => encryptionType = value; }
         public LevelElement[,] Grid { get => grid; set => grid = value; }
-
+        public List<CoordinateSet> ReentryPoints { get => reentryPoints; set => reentryPoints = value; }
     }
 
 }

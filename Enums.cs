@@ -22,6 +22,9 @@ namespace LodeRunner
         FallThrough, // 5
         Gold,        // 6
         Level_Ladder,
+        Player,
+        Enemy,
+        ReentryPoint
 
     };
 
