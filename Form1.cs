@@ -19,6 +19,7 @@ namespace LodeRunner
         private PictureBox[] picEnemies;
         private PictureBox[] picReentryPoints;
         private ToolStripMenuItem[] mnuLevelElements;
+        private int selectedElementIndex = 1;
 
         private const int WIDTH = 14;
         private const int HEIGHT = 16;
@@ -898,7 +899,7 @@ namespace LodeRunner
             }
 
             selectedItem.Checked = true;
-            mnuElementSelect.Tag = index;
+            selectedElementIndex = index;
 
         }
 
