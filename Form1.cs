@@ -19,7 +19,9 @@ namespace LodeRunner
         private PictureBox[] picEnemies;
         private PictureBox[] picReentryPoints;
         private ToolStripMenuItem[] mnuLevelElements;
-        private int selectedElementIndex = 1;
+        private ToolStripButton[] tsElements;
+
+        private LevelElement selectedElementIndex = LevelElement.Brick;
 
         private const int WIDTH = 14;
         private const int HEIGHT = 16;
@@ -50,12 +52,22 @@ namespace LodeRunner
             picEnemies = new PictureBox[6] { picEnemy1, picEnemy2, picEnemy3, picEnemy4, picEnemy5, picEnemy6 };
             picReentryPoints = new PictureBox[4] { picReentry1, picReentry2, picReentry3, picReentry4 };
             mnuLevelElements = new ToolStripMenuItem[10] { mnuLevelItem_00, mnuLevelItem_01, mnuLevelItem_02, mnuLevelItem_03, mnuLevelItem_04, mnuLevelItem_05, mnuLevelItem_06, mnuLevelItem_07, mnuLevelItem_08, mnuLevelItem_09 };
+            tsElements = new ToolStripButton[11] { tsElement0, tsElement1, tsElement2, tsElement3, tsElement4, tsElement5, tsElement6, tsElement7, tsElement8, tsElement9, tsElement10 };
 
             initControlsRecursive(pnlLevel.Controls);
             mnuElementSelect.Tag = 1;
 
+            for (int x = 0; x < tsElements.Length; x++) {
+                tsElements[x].Paint += tsElement_Paint;
+                tsElements[x].Click += tsElement_Click;
+            }
+
+            for (int x = 0; x < picReentryPoints.Length; x++) {
+                picReentryPoints[x].Click += picReentryPoints_Click;
+            }
+
         }
-       
+
         void initControlsRecursive(Control.ControlCollection coll) {
 
             foreach (Control control in coll) {
@@ -307,88 +319,8 @@ namespace LodeRunner
             if (lstLevels.SelectedItems.Count > 0) {
 
                 LevelDefinition levelDefinition = (LevelDefinition)lstLevels.SelectedItems[0].Tag;
+                loadLevel(levelDefinition);
 
-                for (int y = 0; y < 16; y++) {
-
-                    for (int x = 0; x < 28; x++) {
-
-                        pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)levelDefinition.Grid[y, x]];
-                        pictureBoxes[y, x].Tag = leftValue((int)levelDefinition.Grid[y, x]);
-
-                    }
-
-                }
-
-
-                // Enemies ..
-
-                for (int x=0; x< 6; x++) {
-
-                    PictureBox picEnemy = picEnemies[x];
-
-                    if (x < levelDefinition.Enemies.Count) {
-
-                        CoordinateSet enemyCoords = levelDefinition.Enemies[x];
-                        picEnemy.Parent = pictureBoxes[enemyCoords.Y, enemyCoords.X];
-                        picEnemy.BackColor = Color.Transparent;
-                        picEnemy.Location = new System.Drawing.Point(0, 0);
-                        picEnemy.Visible = true;
-                        picEnemy.Tag = enemyCoords;
-
-                    }
-                    else {
-
-                        picEnemy.Visible = false;
-                        picEnemy.Tag = null;
-
-                    }
-
-                }
-
-
-                // Reentry Points ..
-
-                for (int x = 0; x < 4; x++) {
-
-                    PictureBox picReentryPoint = picReentryPoints[x];
-                    CoordinateSet reentryPointyCoords = levelDefinition.ReentryPoints[x];
-                    picReentryPoint.Tag = reentryPointyCoords;
-
-                    if (reentryPointyCoords.X > 0) {
-
-                        picReentryPoint.Parent = pictureBoxes[reentryPointyCoords.Y, reentryPointyCoords.X];
-                        picReentryPoint.BackColor = Color.Transparent;
-                        picReentryPoint.Location = new System.Drawing.Point(0, 0);
-                        picReentryPoint.Visible = true;
-
-                    }
-                    else {
-
-                        picReentryPoint.Visible = false;
-
-                    }
-
-                }
-
-
-                // Player starting point
-
-                CoordinateSet playerCoords = levelDefinition.Player;
-                picPlayer.Tag = playerCoords;
-
-                if (playerCoords.X > 0) {
-
-                    picPlayer.Parent = pictureBoxes[playerCoords.Y, playerCoords.X];
-                    picPlayer.BackColor = Color.Transparent;
-                    picPlayer.Location = new System.Drawing.Point(0, 0);
-                    picPlayer.Visible = true;
-
-                }
-                else {
-
-                    picPlayer.Visible = false;
-
-                }
             }
 
         }
@@ -750,22 +682,6 @@ namespace LodeRunner
 
         }
 
-        private void Form1_MouseClick(object sender, MouseEventArgs e) {
-
-            //    Control control = FindControlAtCursor(this);
-
-            //   control = control;
-
-
-            String f = string.Format("{0} {1} ({2}) \n ", DateTime.Now.TimeOfDay.ToString(), e, sender.GetType().Name);
-            f = f;
-        }
-        private void Form1_KeyPress(object sender, KeyPressEventArgs e) {
-
-            String f = string.Format("{0} {1} ({2}) \n ", DateTime.Now.TimeOfDay.ToString(), e, sender.GetType().Name);
-            f = f;
-        }
-
 
         private void ControlOnMouseClick(object sender, MouseEventArgs args) {
 
@@ -780,6 +696,7 @@ namespace LodeRunner
                     name = ((Panel)sender).Name;
                     x = int.Parse(name.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
                     y = int.Parse(name.Substring(5, 1), System.Globalization.NumberStyles.HexNumber);
+
                 }
                 else if (sender is PictureBox) {
 
@@ -790,13 +707,39 @@ namespace LodeRunner
 
                 }
 
-                switch ((LevelElement)mnuElementSelect.Tag) {
+                switch (selectedElementIndex) {
 
                     case LevelElement.ReentryPoint:
 
-                        if (getCountOfLevelElements(LevelElement.ReentryPoint) > 4) {
+                        int reentryPointCount = 0;
+                        foreach (PictureBox picReentryPoint in picReentryPoints) {
+
+                            if (picReentryPoint.Tag != null) { reentryPointCount++; }
+
+                        }
+
+                        if (reentryPointCount == 4) {
                             MessageBox.Show("A maximum of 4 re-entry points can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
+                        }
+
+                        foreach (PictureBox picReentryPoint in picReentryPoints) {
+
+                            if (picReentryPoint.Tag == null) {
+
+                                picReentryPoint.Parent = pictureBoxes[y, x];
+                                picReentryPoint.BackColor = Color.Transparent;
+                                picReentryPoint.Location = new System.Drawing.Point(0, 0);
+                                picReentryPoint.Visible = true;
+
+                                CoordinateSet reentryCoords = new CoordinateSet();
+                                reentryCoords.X = x;
+                                reentryCoords.Y = y;
+                                picReentryPoint.Tag = reentryCoords;
+                                return;
+
+                            }
+
                         }
 
                         break;
@@ -878,8 +821,8 @@ namespace LodeRunner
                 }
 
 
-                pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)mnuElementSelect.Tag];
-                pictureBoxes[y, x].Tag = (int)mnuElementSelect.Tag;
+                pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)selectedElementIndex];
+                pictureBoxes[y, x].Tag = (int)selectedElementIndex;
 
             }
             else {
@@ -899,7 +842,7 @@ namespace LodeRunner
             }
 
             selectedItem.Checked = true;
-            selectedElementIndex = index;
+            selectedElementIndex = (LevelElement)index;
 
         }
 
@@ -960,6 +903,219 @@ namespace LodeRunner
             return count;
 
         }
+
+        private void tsElement_Paint(object sender, PaintEventArgs e) {
+
+            Rectangle picRectangle = new Rectangle(0, 0, 22, 22);
+
+            if (selectedElementIndex == (LevelElement)Int16.Parse( (String)((ToolStripButton)sender).Tag) ) {
+                ControlPaint.DrawBorder(e.Graphics, picRectangle, Color.Red, ButtonBorderStyle.Solid);
+            }
+            else {
+                ControlPaint.DrawBorder(e.Graphics, picRectangle, SystemColors.ControlLight, ButtonBorderStyle.Solid);
+            }
+        }
+
+        private void tsElement_Click(object sender, EventArgs e) {
+
+            selectedElementIndex = (LevelElement)Int16.Parse((String)((ToolStripButton)sender).Tag);
+            this.Refresh();
+
+        }
+
+        private void picReentryPoints_Click(object sender, EventArgs e) {
+
+            ((PictureBox)sender).Visible = false;
+            ((PictureBox)sender).Tag = null;
+
+            this.Refresh();
+
+        }
+
+        private void cmdClear_Click(object sender, EventArgs e) {
+
+            for (int x = 0; x < picEnemies.Length; x++) {
+
+                picEnemies[x].Tag = null;
+                picEnemies[x].Visible = false;
+
+            }
+
+            for (int x = 0; x < picReentryPoints.Length; x++) {
+
+                picReentryPoints[x].Tag = null;
+                picReentryPoints[x].Visible = false;
+
+            }
+
+            for (int y = 0; y < 16; y++) {
+
+                for (int x = 0; x < 28; x++) {
+
+                    pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)LevelElement.Blank];
+                    pictureBoxes[y, x].Tag = (int)LevelElement.Blank;
+
+                }
+
+            }
+
+            picPlayer.Tag = null;
+            picPlayer.Visible = false;
+
+            this.Refresh();
+
+        }
+
+        private void cmdReset_Click(object sender, EventArgs e) {
+
+            if (lstLevels.SelectedItems.Count > 0) {
+
+                LevelDefinition levelDefinition = (LevelDefinition)lstLevels.SelectedItems[0].Tag;
+                loadLevel(levelDefinition);
+
+            }
+
+        }
+
+        private void loadLevel(LevelDefinition levelDefinition) {
+
+
+            for (int y = 0; y < 16; y++) {
+
+                for (int x = 0; x < 28; x++) {
+
+                    pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)levelDefinition.Grid[y, x]];
+                    pictureBoxes[y, x].Tag = (int)levelDefinition.Grid[y, x];
+
+                }
+
+            }
+
+
+            // Enemies ..
+
+            for (int x = 0; x < 6; x++) {
+
+                PictureBox picEnemy = picEnemies[x];
+
+                if (x < levelDefinition.Enemies.Count) {
+
+                    CoordinateSet enemyCoords = levelDefinition.Enemies[x];
+                    picEnemy.Parent = pictureBoxes[enemyCoords.Y, enemyCoords.X];
+                    picEnemy.BackColor = Color.Transparent;
+                    picEnemy.Location = new System.Drawing.Point(0, 0);
+                    picEnemy.Visible = true;
+                    picEnemy.Tag = enemyCoords;
+
+                }
+                else {
+
+                    picEnemy.Visible = false;
+                    picEnemy.Tag = null;
+
+                }
+
+            }
+
+
+            // Reentry Points ..
+
+            for (int x = 0; x < 4; x++) {
+
+                PictureBox picReentryPoint = picReentryPoints[x];
+
+                if (x < levelDefinition.ReentryPoints.Count) {
+
+                    CoordinateSet reentryPointyCoords = levelDefinition.ReentryPoints[x];
+                    picReentryPoint.Parent = pictureBoxes[reentryPointyCoords.Y, reentryPointyCoords.X];
+                    picReentryPoint.BackColor = Color.Transparent;
+                    picReentryPoint.Location = new System.Drawing.Point(0, 0);
+                    picReentryPoint.Visible = true;
+                    picReentryPoint.Tag = reentryPointyCoords;
+
+                }
+                else {
+
+                    picReentryPoint.Visible = false;
+                    picReentryPoint.Tag = null;
+
+                }
+
+            }
+
+
+            // Player starting point
+
+            CoordinateSet playerCoords = levelDefinition.Player;
+            picPlayer.Visible = false;
+
+            if (picPlayer.Tag != null) {
+
+                picPlayer.Tag = playerCoords;
+
+                if (playerCoords.X >= 0) {
+
+                    picPlayer.Parent = pictureBoxes[playerCoords.Y, playerCoords.X];
+                    picPlayer.BackColor = Color.Transparent;
+                    picPlayer.Location = new System.Drawing.Point(0, 0);
+                    picPlayer.Visible = true;
+
+                }
+
+            }
+
+        }
+
+        private void cmdSave_Click(object sender, EventArgs e) {
+
+            if (lstLevels.SelectedItems.Count > 0) {
+
+                LevelDefinition levelDefinition = (LevelDefinition)lstLevels.SelectedItems[0].Tag;
+
+
+                // Enemies ..
+
+                levelDefinition.Enemies.Clear();
+                for (int x = 0; x < picEnemies.Length; x++) {
+
+                    if (picEnemies[x].Visible) {
+                        CoordinateSet coordinate = (CoordinateSet)picEnemies[x].Tag;
+                        levelDefinition.Enemies.Add(coordinate);
+                    }
+
+                }
+
+
+                // Reentry points ..
+
+                levelDefinition.ReentryPoints.Clear();
+                for (int x = 0; x < picReentryPoints.Length; x++) {
+
+                    if (picReentryPoints[x].Visible) {
+                        CoordinateSet coordinate = (CoordinateSet)picReentryPoints[x].Tag;
+                        levelDefinition.ReentryPoints.Add(coordinate);
+                    }
+
+                }
+
+                for (int y = 0; y < 16; y++) {
+
+                    for (int x = 0; x < 28; x++) {
+
+                        levelDefinition.Grid[y,x] = (LevelElement)pictureBoxes[y, x].Tag;
+
+                    }
+
+                }
+
+                levelDefinition.Player = (CoordinateSet)picPlayer.Tag;
+
+            }
+
+            this.Refresh();
+
+        }
+
     }
 
 }

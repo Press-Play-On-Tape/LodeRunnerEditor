@@ -515,16 +515,22 @@
             this.mnuLevelItem_08 = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLevelItem_09 = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
-            this.pictureBox4 = new System.Windows.Forms.PictureBox();
-            this.pictureBox5 = new System.Windows.Forms.PictureBox();
-            this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement0 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement1 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement2 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement3 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement4 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement5 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement6 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement7 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsElement8 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement9 = new System.Windows.Forms.ToolStripButton();
+            this.tsElement10 = new System.Windows.Forms.ToolStripButton();
+            this.cmdReset = new System.Windows.Forms.Button();
+            this.cmdClear = new System.Windows.Forms.Button();
+            this.cmdSave = new System.Windows.Forms.Button();
             this.pnlLevel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picEnemy5)).BeginInit();
@@ -541,11 +547,6 @@
             this.panel7.SuspendLayout();
             this.mnuElementSelect.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -561,6 +562,9 @@
             this.imgBlocks.Images.SetKeyName(5, "Fallthrough.png");
             this.imgBlocks.Images.SetKeyName(6, "Gold.png");
             this.imgBlocks.Images.SetKeyName(7, "LadderLevel.png");
+            this.imgBlocks.Images.SetKeyName(8, "Man2.png");
+            this.imgBlocks.Images.SetKeyName(9, "Enemy3.png");
+            this.imgBlocks.Images.SetKeyName(10, "LevelReentry.png");
             // 
             // pnlLevel
             // 
@@ -1014,7 +1018,7 @@
             this.pnlLevel.Controls.Add(this.pic19F);
             this.pnlLevel.Controls.Add(this.pic1AF);
             this.pnlLevel.Controls.Add(this.pic1BF);
-            this.pnlLevel.Location = new System.Drawing.Point(33, 52);
+            this.pnlLevel.Location = new System.Drawing.Point(6, 49);
             this.pnlLevel.Name = "pnlLevel";
             this.pnlLevel.Size = new System.Drawing.Size(534, 337);
             this.pnlLevel.TabIndex = 448;
@@ -4192,9 +4196,9 @@
             this.lstLevels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
             this.lstLevels.HideSelection = false;
-            this.lstLevels.Location = new System.Drawing.Point(573, 73);
+            this.lstLevels.Location = new System.Drawing.Point(546, 70);
             this.lstLevels.Name = "lstLevels";
-            this.lstLevels.Size = new System.Drawing.Size(169, 315);
+            this.lstLevels.Size = new System.Drawing.Size(169, 342);
             this.lstLevels.TabIndex = 458;
             this.lstLevels.UseCompatibleStateImageBehavior = false;
             this.lstLevels.View = System.Windows.Forms.View.Details;
@@ -4212,7 +4216,7 @@
             // picEnemy5
             // 
             this.picEnemy5.Image = ((System.Drawing.Image)(resources.GetObject("picEnemy5.Image")));
-            this.picEnemy5.Location = new System.Drawing.Point(323, 408);
+            this.picEnemy5.Location = new System.Drawing.Point(123, 388);
             this.picEnemy5.Name = "picEnemy5";
             this.picEnemy5.Size = new System.Drawing.Size(20, 22);
             this.picEnemy5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -4222,7 +4226,7 @@
             // 
             // panel5
             // 
-            this.panel5.Location = new System.Drawing.Point(416, 410);
+            this.panel5.Location = new System.Drawing.Point(389, 407);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(38, 30);
             this.panel5.TabIndex = 530;
@@ -4230,47 +4234,51 @@
             // picReentry1
             // 
             this.picReentry1.Image = ((System.Drawing.Image)(resources.GetObject("picReentry1.Image")));
-            this.picReentry1.Location = new System.Drawing.Point(542, 410);
+            this.picReentry1.Location = new System.Drawing.Point(180, 388);
             this.picReentry1.Name = "picReentry1";
             this.picReentry1.Size = new System.Drawing.Size(20, 22);
             this.picReentry1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picReentry1.TabIndex = 531;
             this.picReentry1.TabStop = false;
+            this.picReentry1.Visible = false;
             // 
             // picReentry2
             // 
             this.picReentry2.Image = ((System.Drawing.Image)(resources.GetObject("picReentry2.Image")));
-            this.picReentry2.Location = new System.Drawing.Point(568, 410);
+            this.picReentry2.Location = new System.Drawing.Point(206, 388);
             this.picReentry2.Name = "picReentry2";
             this.picReentry2.Size = new System.Drawing.Size(20, 22);
             this.picReentry2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picReentry2.TabIndex = 532;
             this.picReentry2.TabStop = false;
+            this.picReentry2.Visible = false;
             // 
             // picReentry3
             // 
             this.picReentry3.Image = ((System.Drawing.Image)(resources.GetObject("picReentry3.Image")));
-            this.picReentry3.Location = new System.Drawing.Point(594, 410);
+            this.picReentry3.Location = new System.Drawing.Point(232, 388);
             this.picReentry3.Name = "picReentry3";
             this.picReentry3.Size = new System.Drawing.Size(20, 22);
             this.picReentry3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picReentry3.TabIndex = 533;
             this.picReentry3.TabStop = false;
+            this.picReentry3.Visible = false;
             // 
             // picReentry4
             // 
             this.picReentry4.Image = ((System.Drawing.Image)(resources.GetObject("picReentry4.Image")));
-            this.picReentry4.Location = new System.Drawing.Point(620, 410);
+            this.picReentry4.Location = new System.Drawing.Point(258, 388);
             this.picReentry4.Name = "picReentry4";
             this.picReentry4.Size = new System.Drawing.Size(20, 22);
             this.picReentry4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picReentry4.TabIndex = 534;
             this.picReentry4.TabStop = false;
+            this.picReentry4.Visible = false;
             // 
             // picEnemy4
             // 
             this.picEnemy4.Image = ((System.Drawing.Image)(resources.GetObject("picEnemy4.Image")));
-            this.picEnemy4.Location = new System.Drawing.Point(275, 410);
+            this.picEnemy4.Location = new System.Drawing.Point(97, 390);
             this.picEnemy4.Name = "picEnemy4";
             this.picEnemy4.Size = new System.Drawing.Size(20, 22);
             this.picEnemy4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -4281,7 +4289,7 @@
             // picEnemy2
             // 
             this.picEnemy2.Image = ((System.Drawing.Image)(resources.GetObject("picEnemy2.Image")));
-            this.picEnemy2.Location = new System.Drawing.Point(218, 408);
+            this.picEnemy2.Location = new System.Drawing.Point(40, 388);
             this.picEnemy2.Name = "picEnemy2";
             this.picEnemy2.Size = new System.Drawing.Size(20, 22);
             this.picEnemy2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -4292,7 +4300,7 @@
             // picEnemy1
             // 
             this.picEnemy1.Image = ((System.Drawing.Image)(resources.GetObject("picEnemy1.Image")));
-            this.picEnemy1.Location = new System.Drawing.Point(180, 410);
+            this.picEnemy1.Location = new System.Drawing.Point(12, 390);
             this.picEnemy1.Name = "picEnemy1";
             this.picEnemy1.Size = new System.Drawing.Size(20, 22);
             this.picEnemy1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -4303,7 +4311,7 @@
             // picEnemy3
             // 
             this.picEnemy3.Image = ((System.Drawing.Image)(resources.GetObject("picEnemy3.Image")));
-            this.picEnemy3.Location = new System.Drawing.Point(249, 410);
+            this.picEnemy3.Location = new System.Drawing.Point(71, 390);
             this.picEnemy3.Name = "picEnemy3";
             this.picEnemy3.Size = new System.Drawing.Size(20, 22);
             this.picEnemy3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -4314,7 +4322,7 @@
             // picEnemy6
             // 
             this.picEnemy6.Image = ((System.Drawing.Image)(resources.GetObject("picEnemy6.Image")));
-            this.picEnemy6.Location = new System.Drawing.Point(351, 410);
+            this.picEnemy6.Location = new System.Drawing.Point(151, 390);
             this.picEnemy6.Name = "picEnemy6";
             this.picEnemy6.Size = new System.Drawing.Size(20, 22);
             this.picEnemy6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -4325,7 +4333,7 @@
             // picPlayer
             // 
             this.picPlayer.Image = ((System.Drawing.Image)(resources.GetObject("picPlayer.Image")));
-            this.picPlayer.Location = new System.Drawing.Point(390, 371);
+            this.picPlayer.Location = new System.Drawing.Point(363, 368);
             this.picPlayer.Name = "picPlayer";
             this.picPlayer.Size = new System.Drawing.Size(20, 22);
             this.picPlayer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -4336,7 +4344,7 @@
             // panel6
             // 
             this.panel6.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.panel6.Location = new System.Drawing.Point(573, 52);
+            this.panel6.Location = new System.Drawing.Point(546, 49);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(169, 21);
             this.panel6.TabIndex = 541;
@@ -4348,7 +4356,7 @@
             this.panel7.Controls.Add(this.cmdLevelDelete);
             this.panel7.Controls.Add(this.cmdLevelUp);
             this.panel7.Controls.Add(this.cmdLevelAdd);
-            this.panel7.Location = new System.Drawing.Point(573, 364);
+            this.panel7.Location = new System.Drawing.Point(546, 388);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(169, 23);
             this.panel7.TabIndex = 542;
@@ -4511,126 +4519,181 @@
             this.pictureBox1.TabIndex = 543;
             this.pictureBox1.TabStop = false;
             // 
-            // pictureBox2
-            // 
-            this.pictureBox2.BackColor = System.Drawing.Color.Red;
-            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(6, 50);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox2.TabIndex = 544;
-            this.pictureBox2.TabStop = false;
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.BackColor = System.Drawing.SystemColors.Control;
-            this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
-            this.pictureBox3.Location = new System.Drawing.Point(6, 73);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox3.TabIndex = 545;
-            this.pictureBox3.TabStop = false;
-            // 
-            // pictureBox4
-            // 
-            this.pictureBox4.BackColor = System.Drawing.SystemColors.Control;
-            this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox4.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox4.Image")));
-            this.pictureBox4.Location = new System.Drawing.Point(6, 99);
-            this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox4.TabIndex = 546;
-            this.pictureBox4.TabStop = false;
-            // 
-            // pictureBox5
-            // 
-            this.pictureBox5.BackColor = System.Drawing.SystemColors.Control;
-            this.pictureBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox5.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox5.Image")));
-            this.pictureBox5.Location = new System.Drawing.Point(6, 125);
-            this.pictureBox5.Name = "pictureBox5";
-            this.pictureBox5.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox5.TabIndex = 547;
-            this.pictureBox5.TabStop = false;
-            // 
-            // pictureBox6
-            // 
-            this.pictureBox6.BackColor = System.Drawing.SystemColors.Control;
-            this.pictureBox6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox6.Location = new System.Drawing.Point(6, 151);
-            this.pictureBox6.Name = "pictureBox6";
-            this.pictureBox6.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox6.TabIndex = 548;
-            this.pictureBox6.TabStop = false;
-            // 
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripButton2,
-            this.toolStripButton3,
-            this.toolStripButton4});
+            this.tsElement0,
+            this.tsElement1,
+            this.tsElement2,
+            this.tsElement3,
+            this.tsElement4,
+            this.tsElement5,
+            this.tsElement6,
+            this.tsElement7,
+            this.toolStripSeparator1,
+            this.tsElement8,
+            this.tsElement9,
+            this.tsElement10});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(834, 25);
             this.toolStrip1.TabIndex = 549;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // toolStripButton1
+            // tsElement0
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
+            this.tsElement0.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement0.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement0.Name = "tsElement0";
+            this.tsElement0.Size = new System.Drawing.Size(23, 22);
+            this.tsElement0.Tag = "0";
             // 
-            // toolStripButton2
+            // tsElement1
             // 
-            this.toolStripButton2.BackColor = System.Drawing.Color.Red;
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "toolStripButton2";
+            this.tsElement1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement1.Image = ((System.Drawing.Image)(resources.GetObject("tsElement1.Image")));
+            this.tsElement1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement1.Name = "tsElement1";
+            this.tsElement1.Size = new System.Drawing.Size(23, 22);
+            this.tsElement1.Tag = "1";
+            this.tsElement1.Text = "toolStripButton1";
             // 
-            // toolStripButton3
+            // tsElement2
             // 
-            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton3.Text = "toolStripButton3";
+            this.tsElement2.BackColor = System.Drawing.SystemColors.Control;
+            this.tsElement2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement2.Image = ((System.Drawing.Image)(resources.GetObject("tsElement2.Image")));
+            this.tsElement2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement2.Name = "tsElement2";
+            this.tsElement2.Size = new System.Drawing.Size(23, 22);
+            this.tsElement2.Tag = "2";
+            this.tsElement2.Text = "toolStripButton2";
             // 
-            // toolStripButton4
+            // tsElement3
             // 
-            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
-            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton4.Text = "toolStripButton4";
+            this.tsElement3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement3.Image = ((System.Drawing.Image)(resources.GetObject("tsElement3.Image")));
+            this.tsElement3.ImageTransparentColor = System.Drawing.Color.White;
+            this.tsElement3.Name = "tsElement3";
+            this.tsElement3.Size = new System.Drawing.Size(23, 22);
+            this.tsElement3.Tag = "3";
+            this.tsElement3.Text = "toolStripButton4";
+            // 
+            // tsElement4
+            // 
+            this.tsElement4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement4.Image = ((System.Drawing.Image)(resources.GetObject("tsElement4.Image")));
+            this.tsElement4.ImageTransparentColor = System.Drawing.Color.White;
+            this.tsElement4.Name = "tsElement4";
+            this.tsElement4.Size = new System.Drawing.Size(23, 22);
+            this.tsElement4.Tag = "4";
+            this.tsElement4.Text = "toolStripButton5";
+            // 
+            // tsElement5
+            // 
+            this.tsElement5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement5.Image = ((System.Drawing.Image)(resources.GetObject("tsElement5.Image")));
+            this.tsElement5.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement5.Name = "tsElement5";
+            this.tsElement5.Size = new System.Drawing.Size(23, 22);
+            this.tsElement5.Tag = "5";
+            this.tsElement5.Text = "toolStripButton6";
+            // 
+            // tsElement6
+            // 
+            this.tsElement6.BackColor = System.Drawing.SystemColors.Control;
+            this.tsElement6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement6.Image = ((System.Drawing.Image)(resources.GetObject("tsElement6.Image")));
+            this.tsElement6.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement6.Name = "tsElement6";
+            this.tsElement6.Size = new System.Drawing.Size(23, 22);
+            this.tsElement6.Tag = "6";
+            this.tsElement6.Text = "toolStripButton7";
+            // 
+            // tsElement7
+            // 
+            this.tsElement7.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement7.Image = ((System.Drawing.Image)(resources.GetObject("tsElement7.Image")));
+            this.tsElement7.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement7.Name = "tsElement7";
+            this.tsElement7.Size = new System.Drawing.Size(23, 22);
+            this.tsElement7.Tag = "7";
+            this.tsElement7.Text = "toolStripButton1";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsElement8
+            // 
+            this.tsElement8.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement8.Image = ((System.Drawing.Image)(resources.GetObject("tsElement8.Image")));
+            this.tsElement8.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement8.Name = "tsElement8";
+            this.tsElement8.Size = new System.Drawing.Size(23, 22);
+            this.tsElement8.Tag = "8";
+            this.tsElement8.Text = "toolStripButton1";
+            // 
+            // tsElement9
+            // 
+            this.tsElement9.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement9.Image = ((System.Drawing.Image)(resources.GetObject("tsElement9.Image")));
+            this.tsElement9.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement9.Name = "tsElement9";
+            this.tsElement9.Size = new System.Drawing.Size(23, 22);
+            this.tsElement9.Tag = "9";
+            this.tsElement9.Text = "toolStripButton1";
+            // 
+            // tsElement10
+            // 
+            this.tsElement10.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsElement10.Image = ((System.Drawing.Image)(resources.GetObject("tsElement10.Image")));
+            this.tsElement10.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsElement10.Name = "tsElement10";
+            this.tsElement10.Size = new System.Drawing.Size(23, 22);
+            this.tsElement10.Tag = "10";
+            this.tsElement10.Text = "toolStripButton2";
+            // 
+            // cmdReset
+            // 
+            this.cmdReset.Location = new System.Drawing.Point(402, 391);
+            this.cmdReset.Name = "cmdReset";
+            this.cmdReset.Size = new System.Drawing.Size(68, 21);
+            this.cmdReset.TabIndex = 550;
+            this.cmdReset.Text = "&Reset";
+            this.cmdReset.UseVisualStyleBackColor = true;
+            this.cmdReset.Click += new System.EventHandler(this.cmdReset_Click);
+            // 
+            // cmdClear
+            // 
+            this.cmdClear.Location = new System.Drawing.Point(472, 391);
+            this.cmdClear.Name = "cmdClear";
+            this.cmdClear.Size = new System.Drawing.Size(68, 21);
+            this.cmdClear.TabIndex = 551;
+            this.cmdClear.Text = "&Clear";
+            this.cmdClear.UseVisualStyleBackColor = true;
+            this.cmdClear.Click += new System.EventHandler(this.cmdClear_Click);
+            // 
+            // cmdSave
+            // 
+            this.cmdSave.Location = new System.Drawing.Point(321, 391);
+            this.cmdSave.Name = "cmdSave";
+            this.cmdSave.Size = new System.Drawing.Size(68, 21);
+            this.cmdSave.TabIndex = 552;
+            this.cmdSave.Text = "&Save";
+            this.cmdSave.UseVisualStyleBackColor = true;
+            this.cmdSave.Click += new System.EventHandler(this.cmdSave_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(834, 501);
+            this.Controls.Add(this.cmdSave);
+            this.Controls.Add(this.cmdClear);
+            this.Controls.Add(this.cmdReset);
             this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.pictureBox6);
-            this.Controls.Add(this.pictureBox5);
-            this.Controls.Add(this.pictureBox4);
-            this.Controls.Add(this.pictureBox3);
-            this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.panel7);
             this.Controls.Add(this.panel6);
@@ -4652,8 +4715,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.pnlLevel.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -4671,11 +4732,6 @@
             this.panel7.ResumeLayout(false);
             this.mnuElementSelect.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -5134,10 +5190,6 @@
         private System.Windows.Forms.Panel pic19F;
         private System.Windows.Forms.Panel pic1AF;
         private System.Windows.Forms.Panel pic1BF;
-        private System.Windows.Forms.Panel Panel1;
-        private System.Windows.Forms.Panel Panel2;
-        private System.Windows.Forms.Panel Panel3;
-        private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
@@ -5176,16 +5228,22 @@
         private System.Windows.Forms.ToolStripMenuItem mnuLevelItem_08;
         private System.Windows.Forms.ToolStripMenuItem mnuLevelItem_09;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.PictureBox pictureBox3;
-        private System.Windows.Forms.PictureBox pictureBox4;
-        private System.Windows.Forms.PictureBox pictureBox5;
-        private System.Windows.Forms.PictureBox pictureBox6;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
-        private System.Windows.Forms.ToolStripButton toolStripButton3;
-        private System.Windows.Forms.ToolStripButton toolStripButton4;
+        private System.Windows.Forms.ToolStripButton tsElement1;
+        private System.Windows.Forms.ToolStripButton tsElement2;
+        private System.Windows.Forms.ToolStripButton tsElement0;
+        private System.Windows.Forms.ToolStripButton tsElement3;
+        private System.Windows.Forms.ToolStripButton tsElement4;
+        private System.Windows.Forms.ToolStripButton tsElement5;
+        private System.Windows.Forms.ToolStripButton tsElement6;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton tsElement7;
+        private System.Windows.Forms.ToolStripButton tsElement8;
+        private System.Windows.Forms.ToolStripButton tsElement9;
+        private System.Windows.Forms.ToolStripButton tsElement10;
+        private System.Windows.Forms.Button cmdReset;
+        private System.Windows.Forms.Button cmdClear;
+        private System.Windows.Forms.Button cmdSave;
     }
 }
 
