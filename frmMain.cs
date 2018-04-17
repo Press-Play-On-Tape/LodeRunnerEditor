@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,8 +13,7 @@ using System.Windows.Forms;
 
 namespace LodeRunner
 {
-    public partial class Form1 : Form
-    {
+    public partial class frmMain : Form {
 
         private Panel[,] pictureBoxes;
         private PictureBox[] picEnemies;
@@ -21,12 +21,17 @@ namespace LodeRunner
         private ToolStripMenuItem[] mnuLevelElements;
         private ToolStripButton[] tsElements;
 
+        private String gameNumber = "";
+        private String numberOfGames = "";
+        private Int16 gameNumberId = 0;
+        private List<Int16> gamesPerLevels = new List<Int16>();
+
         private LevelElement selectedElementIndex = LevelElement.Brick;
 
         private const int WIDTH = 14;
         private const int HEIGHT = 16;
 
-        public Form1() {
+        public frmMain() {
 
             InitializeComponent();
 
@@ -96,7 +101,7 @@ namespace LodeRunner
             }
 
         }
-        
+
         private int leftValue(int val) {
 
             return val >> 4;
@@ -156,7 +161,7 @@ namespace LodeRunner
                                 int row = cursor / (WIDTH * 2);
                                 int col = (cursor % (WIDTH * 2));
 
-                                levelDefinition.Grid[row, col]= (LevelElement)block;
+                                levelDefinition.Grid[row, col] = (LevelElement)block;
 
                             }
                             else {
@@ -196,9 +201,19 @@ namespace LodeRunner
 
         private void mnuLoad_Click(object sender, EventArgs e) {
 
+            clearLevel();
+            cmdSave.Enabled = false;
+            cmdClear.Enabled = false;
+            cmdReset.Enabled = false;
+
+            lstLevels.Items.Clear();
+
             bool inLevel = false;
 
             if (dgOpenMapData.ShowDialog() == DialogResult.OK) {
+
+                mnuSave.Enabled = true;
+                mnuSaveAs.Enabled = true;
 
                 const string userRoot = "HKEY_CURRENT_USER";
                 const string subkey = "LodeRunner";
@@ -215,11 +230,29 @@ namespace LodeRunner
                     string line;
                     while ((line = sr.ReadLine()) != null) {
 
+                        if (line.StartsWith("#define GAME_NUMBER")) {
 
+                            gameNumber = line.Substring(@"#define GAME_NUMBER".Length + 1).Trim();
 
-                        //                foreach (String line in lines) {
+                        }
+                        else if (line.StartsWith("#define NUMBER_OF_GAMES")) {
 
-                        if (line.StartsWith("const uint8_t PROGMEM")) {
+                            numberOfGames = line.Substring(@"#define NUMBER_OF_GAMES".Length + 1).Trim();
+
+                        }
+                        else if (line.StartsWith("#if GAME_NUMBER")) {
+
+                            gameNumberId = Int16.Parse(line.Substring(line.IndexOf("==") + 3).Trim());
+
+                        }
+                        else if (line.StartsWith("  #define LEVEL_COUNT")) {
+
+                            Int16 gamesPerLevel = Int16.Parse(line.Substring(@"  #define LEVEL_COUNT".Length + 1).Trim());
+                            gamesPerLevels.Add(gamesPerLevel);
+                            dgExport.Rows.Add(dgExport.Rows.Count, gamesPerLevel);
+
+                        }
+                        else if (line.StartsWith("const uint8_t PROGMEM")) {
 
                             levelDefinition = new LevelDefinition();
                             levelDefinition.LevelName = line.Substring(line.IndexOf("PROGMEM ") + 8, line.Length - line.IndexOf("PROGMEM ") - 14);
@@ -240,7 +273,7 @@ namespace LodeRunner
 
                                 char[] splitchar = { ',' };
                                 String[] strData = line.Trim().Split(splitchar);
-                                
+
                                 int cursor = 0;
 
 
@@ -312,376 +345,43 @@ namespace LodeRunner
 
             }
 
+            foreach (ListViewItem item in lstLevels.Items) {
+                validate(item, (LevelDefinition)item.Tag);
+            }
+
+
+            MessageBox.Show("Level data loaded successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
         }
 
         private void lstLevels_SelectedIndexChanged(object sender, EventArgs e) {
 
-            if (lstLevels.SelectedItems.Count > 0) {
+            if (lstLevels.SelectedItems.Count > 0 && lstLevels.Tag != lstLevels.SelectedItems[0]) {
 
-                LevelDefinition levelDefinition = (LevelDefinition)lstLevels.SelectedItems[0].Tag;
-                loadLevel(levelDefinition);
+                lstLevels.Tag = lstLevels.SelectedItems[0];
+
+                if (lstLevels.SelectedItems.Count > 0) {
+
+                    cmdLevelDelete.Enabled = true;
+                    LevelDefinition levelDefinition = (LevelDefinition)lstLevels.SelectedItems[0].Tag;
+                    loadLevel(levelDefinition);
+
+                }
+                else {
+
+                    cmdLevelDelete.Enabled = false;
+
+                }
+
+                cmdLevelUp.ForeColor = (lstLevels.SelectedItems.Count > 0 && lstLevels.SelectedItems[0].Index > 0 ? SystemColors.ControlText : SystemColors.ControlDark);
+                cmdLevelUp.Enabled = (lstLevels.SelectedItems.Count > 0 && lstLevels.SelectedItems[0].Index > 0);
+                cmdLevelDown.ForeColor = (lstLevels.SelectedItems.Count > 0 && lstLevels.SelectedItems[0].Index < lstLevels.Items.Count ? SystemColors.ControlText : SystemColors.ControlDark);
+                cmdLevelDown.Enabled = (lstLevels.SelectedItems.Count > 0 && lstLevels.SelectedItems[0].Index < lstLevels.Items.Count);
 
             }
 
         }
-
-        /*
-        Function Return_Level(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
-
-            Dim rleRow As String
-            Dim rleCol As String
-            Dim rleNorm As String
-
-            rleRow = RLE_Row(xOffset, yOffset)
-            rleCol = RLE_Col(xOffset, yOffset)
-            rleNorm = RLE_Norm(xOffset, yOffset)
-
-
-            If Len(rleCol) < Len(rleRow) Then
-
-                rleRow = rleCol
-
-
-            End If
-
-
-            If Len(rleNorm) < Len(rleRow) Then
-
-                rleRow = rleNorm
-
-
-            End If
-
-
-            Return_Level = rleRow
-
-        End Function
-
-        Function RLE_Row(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
-
-            Dim output As String
-            Dim currentCell As Integer
-            Dim iCount As Integer
-            Dim enemyCount As Integer
-            Dim ladderCount As Integer
-            Dim x As Integer
-            Dim y As Integer
-            Dim reentryPoints As Integer
-
-
-            currentCell = Val(Cells(yOffset, xOffset).Value)
-            iCount = 0
-
-            output = Common(xOffset, yOffset)
-            output = output + "0x00, "
-
-            ' Map data ..
-
-            For y = 0 To 15
-
-               For x = 0 To 27
-
-                    If x<> 0 Or y <> 0 Then
-
-                        If Val(Cells(y + yOffset, x + xOffset).Value) <> currentCell Or iCount = 30 Then
-
-                            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((currentCell * 32) + iCount + 1, 2)) + ", "
-                            iCount = 0
-                            currentCell = Val(Cells(y + yOffset, x + xOffset).Value)
-
-                        Else
-                            iCount = iCount + 1
-                        End If
-
-
-                    End If
-
-
-                Next
-
-            Next
-
-
-            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((currentCell* 32) + iCount + 1, 2)) + ", 0x00"
-            RLE_Row = output
-
-        End Function
-        Function RLE_Col(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
-
-            Dim output As String
-            Dim currentCell As Integer
-            Dim iCount As Integer
-            Dim enemyCount As Integer
-            Dim ladderCount As Integer
-            Dim x As Integer
-            Dim y As Integer
-            Dim reentryPoints As Integer
-
-
-            currentCell = Val(Cells(yOffset, xOffset).Value)
-
-            iCount = 0
-
-            output = Common(xOffset, yOffset)
-            output = output + "0x01, "
-
-            ' Map data ..
-
-            For x = 0 To 27
-
-                For y = 0 To 15
-
-                    If x<> 0 Or y <> 0 Then
-
-                        If Val(Cells(y + yOffset, x + xOffset).Value) <> currentCell Or iCount = 30 Then
-
-                            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((currentCell * 32) + iCount + 1, 2)) + ", "
-                            iCount = 0
-                            currentCell = Val(Cells(y + yOffset, x + xOffset).Value)
-
-                        Else
-                            iCount = iCount + 1
-                        End If
-
-
-                    End If
-
-
-                Next
-
-            Next
-
-
-            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((currentCell* 32) + iCount + 1, 2)) + ", 0x00"
-            RLE_Col = output
-
-        End Function
-        Function RLE_Norm(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
-
-            Dim output As String
-            Dim currentCell As Integer
-            Dim iCount As Integer
-            Dim enemyCount As Integer
-            Dim ladderCount As Integer
-            Dim x As Integer
-            Dim y As Integer
-            Dim reentryPoints As Integer
-            Dim l As Integer
-            Dim r As Integer
-
-
-            currentCell = Val(Cells(yOffset, xOffset).Value)
-            iCount = 0
-
-            output = Common(xOffset, yOffset)
-            output = output + "0x02, "
-
-            ' Map data ..
-
-            For y = 0 To 15
-
-                For x = 0 To 27 Step 2
-
-                    l = Val(Cells(y + yOffset, x + xOffset).Value)
-                    r = Val(Cells(y + yOffset, x + xOffset + 1).Value)
-
-                    output = output + "0x" + Trim(WorksheetFunction.Dec2Hex((l* 16) + r)) + ", "
-
-                Next
-
-            Next
-
-
-            RLE_Norm = output
-
-        End Function
-        Function Common(ByVal xOffset As Integer, ByVal yOffset As Integer) As String
-
-            Dim output As String
-            Dim currentCell As Integer
-            Dim iCount As Integer
-            Dim enemyCount As Integer
-            Dim ladderCount As Integer
-            Dim x As Integer
-            Dim y As Integer
-            Dim reentryPoints As Integer
-
-
-            currentCell = Val(Cells(yOffset, xOffset).Value)
-            iCount = 0
-
-
-            ' Work out players starting position ..
-
-            For y = 0 To 15
-
-               For x = 0 To 27
-
-                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 50 Then
-
-                         output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(x, 2)) + ", "
-                         output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(y, 2)) + ", "
-
-                    End If
-
-
-                Next
-
-            Next
-
-
-            ' Work out number of enemies ..
-
-
-            enemyCount = 0
-
-            For y = 0 To 15
-
-               For x = 0 To 27
-
-                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 3 Then
-
-                        enemyCount = enemyCount + 1
-
-                    End If
-
-
-                Next
-
-            Next
-
-
-            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(enemyCount, 2)) + ", "
-
-
-            ' Add enemies ..
-
-            For y = 0 To 15
-
-               For x = 0 To 27
-
-                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 3 Then
-
-                        output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(x, 2)) + ", "
-                        output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(y, 2)) + ", "
-
-                    End If
-
-
-                Next
-
-            Next
-
-
-
-            ' Work out number of ladders ..
-
-
-            ladderCount = 0
-
-            For y = 0 To 15
-
-               For x = 0 To 27
-
-                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 23 Then
-
-                        ladderCount = ladderCount + 1
-
-                    End If
-
-
-                Next
-
-            Next
-
-
-            output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(ladderCount, 2)) + ", "
-
-
-            ' Add ladders ..
-
-            For y = 0 To 15
-
-               For x = 0 To 27
-
-                    If Cells(y + yOffset, x + xOffset).Interior.ColorIndex = 23 Then
-
-                        output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(x, 2)) + ", "
-                        output = output + "0x" + Trim(WorksheetFunction.Dec2Hex(y, 2)) + ", "
-
-                    End If
-
-
-                Next
-
-            Next
-
-
-            Common = output
-
-        End Function
-        */
-
-
-
-        private String Common(LevelDefinition levelDefinition) {
-
-
-            StringBuilder common = new StringBuilder();
-
-
-            // Player position ..
-
-            common.Append(levelDefinition.Player.X.ToString("X"));
-            common.Append(levelDefinition.Player.Y.ToString("X"));
-
-
-            // Number of Enemies ..
-
-            common.Append(levelDefinition.Enemies.Count.ToString("X"));
-
-            for (int x = 0; x < levelDefinition.Enemies.Count; x++) {
-
-                common.Append(levelDefinition.Enemies[x].X.ToString("X"));
-                common.Append(levelDefinition.Enemies[x].Y.ToString("X"));
-
-            }
-
-
-            // Work out number of ladders ..
-
-            int ladderCount = 0;
-
-            for (int y = 0; y < 16; y++) {
-
-                for (int x = 0; x < 28; x++) {
-
-                    if (levelDefinition.Grid[y, x] == LevelElement.Level_Ladder) {
-                        ladderCount++;
-                    }
-
-                }
-
-            }
-
-
-            for (int y = 0; y < 16; y++) {
-
-                for (int x = 0; x < 28; x++) {
-
-                    if (levelDefinition.Grid[y, x] == LevelElement.Level_Ladder) {
-                        common.Append(x.ToString("X"));
-                        common.Append(y.ToString("X"));
-                    }
-
-                }
-
-            }
-
-            return common.ToString();
-
-        }
-
 
         private void ControlOnMouseClick(object sender, MouseEventArgs args) {
 
@@ -689,145 +389,149 @@ namespace LodeRunner
             int x = -1;
             int y = -1;
 
-            if (args.Button == MouseButtons.Left) {
+            if (lstLevels.SelectedItems.Count > 0) {
 
-                if (sender is Panel) {
+                if (args.Button == MouseButtons.Left) {
 
-                    name = ((Panel)sender).Name;
-                    x = int.Parse(name.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
-                    y = int.Parse(name.Substring(5, 1), System.Globalization.NumberStyles.HexNumber);
+                    if (sender is Panel) {
 
-                }
-                else if (sender is PictureBox) {
+                        name = ((Panel)sender).Name;
+                        x = int.Parse(name.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
+                        y = int.Parse(name.Substring(5, 1), System.Globalization.NumberStyles.HexNumber);
 
-                    name = ((PictureBox)sender).Name;
-                    CoordinateSet enemyCoordiantes = (CoordinateSet)((PictureBox)sender).Tag;
-                    x = enemyCoordiantes.X;
-                    y = enemyCoordiantes.Y;
+                    }
+                    else if (sender is PictureBox) {
 
-                }
+                        name = ((PictureBox)sender).Name;
+                        CoordinateSet enemyCoordiantes = (CoordinateSet)((PictureBox)sender).Tag;
+                        x = enemyCoordiantes.X;
+                        y = enemyCoordiantes.Y;
 
-                switch (selectedElementIndex) {
+                    }
 
-                    case LevelElement.ReentryPoint:
+                    switch (selectedElementIndex) {
 
-                        int reentryPointCount = 0;
-                        foreach (PictureBox picReentryPoint in picReentryPoints) {
+                        case LevelElement.ReentryPoint:
 
-                            if (picReentryPoint.Tag != null) { reentryPointCount++; }
+                            int reentryPointCount = 0;
+                            foreach (PictureBox picReentryPoint in picReentryPoints) {
 
-                        }
-
-                        if (reentryPointCount == 4) {
-                            MessageBox.Show("A maximum of 4 re-entry points can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-
-                        foreach (PictureBox picReentryPoint in picReentryPoints) {
-
-                            if (picReentryPoint.Tag == null) {
-
-                                picReentryPoint.Parent = pictureBoxes[y, x];
-                                picReentryPoint.BackColor = Color.Transparent;
-                                picReentryPoint.Location = new System.Drawing.Point(0, 0);
-                                picReentryPoint.Visible = true;
-
-                                CoordinateSet reentryCoords = new CoordinateSet();
-                                reentryCoords.X = x;
-                                reentryCoords.Y = y;
-                                picReentryPoint.Tag = reentryCoords;
-                                return;
+                                if (picReentryPoint.Tag != null) { reentryPointCount++; }
 
                             }
 
-                        }
+                            if (reentryPointCount == 4) {
+                                MessageBox.Show("A maximum of 4 re-entry points can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
 
-                        break;
+                            foreach (PictureBox picReentryPoint in picReentryPoints) {
 
-                    case LevelElement.Level_Ladder:
+                                if (picReentryPoint.Tag == null) {
 
-                        if (getCountOfLevelElements(LevelElement.Level_Ladder) > 18) {
-                            MessageBox.Show("A maximum of 18 escape ladders can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
+                                    picReentryPoint.Parent = pictureBoxes[y, x];
+                                    picReentryPoint.BackColor = Color.Transparent;
+                                    picReentryPoint.Location = new System.Drawing.Point(0, 0);
+                                    picReentryPoint.Visible = true;
 
-                        break;
-
-                    case LevelElement.Enemy:
-
-                        int count = 0;
-
-                        foreach (PictureBox picEnemy in picEnemies) {
-
-                            if (picEnemy.Tag != null) {
-
-                                count++;
-
-                                CoordinateSet enemyPosition = (CoordinateSet)picEnemy.Tag;
-
-                                if (enemyPosition.X == x && enemyPosition.Y == y) {
-
-                                    picEnemy.Tag = null;
-                                    picEnemy.Visible = false;
+                                    CoordinateSet reentryCoords = new CoordinateSet();
+                                    reentryCoords.X = x;
+                                    reentryCoords.Y = y;
+                                    picReentryPoint.Tag = reentryCoords;
                                     return;
 
                                 }
 
                             }
 
-                        }
+                            break;
 
-                        if (count == 6) {
-                            MessageBox.Show("A maximum of 6 enemies can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
+                        case LevelElement.Level_Ladder:
 
-                        }
+                            if (getCountOfLevelElements(LevelElement.Level_Ladder) > 18) {
+                                MessageBox.Show("A maximum of 18 escape ladders can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
 
-                        foreach (PictureBox picEnemy in picEnemies) {
+                            break;
 
-                            if (picEnemy.Tag == null) {
+                        case LevelElement.Enemy:
 
-                                picEnemy.Parent = pictureBoxes[y, x];
-                                picEnemy.BackColor = Color.Transparent;
-                                picEnemy.Location = new System.Drawing.Point(0, 0);
-                                picEnemy.Visible = true;
+                            int count = 0;
 
-                                CoordinateSet enemyCoords = new CoordinateSet();
-                                enemyCoords.X = x;
-                                enemyCoords.Y = y;
-                                picEnemy.Tag = enemyCoords;
+                            foreach (PictureBox picEnemy in picEnemies) {
+
+                                if (picEnemy.Tag != null) {
+
+                                    count++;
+
+                                    CoordinateSet enemyPosition = (CoordinateSet)picEnemy.Tag;
+
+                                    if (enemyPosition.X == x && enemyPosition.Y == y) {
+
+                                        picEnemy.Tag = null;
+                                        picEnemy.Visible = false;
+                                        return;
+
+                                    }
+
+                                }
+
+                            }
+
+                            if (count == 6) {
+                                MessageBox.Show("A maximum of 6 enemies can be added per level.", "Level Design Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 return;
 
                             }
 
-                        }
+                            foreach (PictureBox picEnemy in picEnemies) {
 
-                        return;
+                                if (picEnemy.Tag == null) {
 
-                    case LevelElement.Player:
+                                    picEnemy.Parent = pictureBoxes[y, x];
+                                    picEnemy.BackColor = Color.Transparent;
+                                    picEnemy.Location = new System.Drawing.Point(0, 0);
+                                    picEnemy.Visible = true;
 
-                        picPlayer.Parent = pictureBoxes[y, x];
-                        picPlayer.BackColor = Color.Transparent;
-                        picPlayer.Location = new System.Drawing.Point(0, 0);
-                        picPlayer.Visible = true;
+                                    CoordinateSet enemyCoords = new CoordinateSet();
+                                    enemyCoords.X = x;
+                                    enemyCoords.Y = y;
+                                    picEnemy.Tag = enemyCoords;
+                                    return;
 
-                        CoordinateSet playerCoords = new CoordinateSet();
-                        playerCoords.X = x;
-                        playerCoords.Y = y;
-                        picPlayer.Tag = playerCoords;
+                                }
 
-                        return;
+                            }
+
+                            return;
+
+                        case LevelElement.Player:
+
+                            picPlayer.Parent = pictureBoxes[y, x];
+                            picPlayer.BackColor = Color.Transparent;
+                            picPlayer.Location = new System.Drawing.Point(0, 0);
+                            picPlayer.Visible = true;
+
+                            CoordinateSet playerCoords = new CoordinateSet();
+                            playerCoords.X = x;
+                            playerCoords.Y = y;
+                            picPlayer.Tag = playerCoords;
+
+                            return;
+
+                    }
+
+
+                    pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)selectedElementIndex];
+                    pictureBoxes[y, x].Tag = (int)selectedElementIndex;
 
                 }
+                else {
 
+                    mnuElementSelect.Show(Cursor.Position);
 
-                pictureBoxes[y, x].BackgroundImage = imgBlocks.Images[(int)selectedElementIndex];
-                pictureBoxes[y, x].Tag = (int)selectedElementIndex;
-
-            }
-            else {
-
-                mnuElementSelect.Show(Cursor.Position);
+                }
 
             }
             
@@ -904,6 +608,24 @@ namespace LodeRunner
 
         }
 
+        int getCountOfLevelElements(LevelDefinition levelDefinition, LevelElement levelElement) {
+
+            int count = 0;
+
+            for (int y = 0; y < 16; y++) {
+
+                for (int x = 0; x < 28; x++) {
+
+                    if (levelDefinition.Grid[y,x] == levelElement) count++;
+
+                }
+
+            }
+
+            return count;
+
+        }
+
         private void tsElement_Paint(object sender, PaintEventArgs e) {
 
             Rectangle picRectangle = new Rectangle(0, 0, 22, 22);
@@ -918,21 +640,34 @@ namespace LodeRunner
 
         private void tsElement_Click(object sender, EventArgs e) {
 
-            selectedElementIndex = (LevelElement)Int16.Parse((String)((ToolStripButton)sender).Tag);
-            this.Refresh();
+            if (lstLevels.SelectedItems.Count > 0) {
+
+                selectedElementIndex = (LevelElement)Int16.Parse((String)((ToolStripButton)sender).Tag);
+                tsTopMenu.Refresh();
+
+            }
 
         }
 
         private void picReentryPoints_Click(object sender, EventArgs e) {
 
-            ((PictureBox)sender).Visible = false;
-            ((PictureBox)sender).Tag = null;
+            if (lstLevels.SelectedItems.Count > 0) {
 
-            this.Refresh();
+                ((PictureBox)sender).Visible = false;
+                ((PictureBox)sender).Tag = null;
+
+            }
 
         }
 
         private void cmdClear_Click(object sender, EventArgs e) {
+
+            clearLevel();
+            lstLevels.Select();
+
+        }
+
+        private void clearLevel() { 
 
             for (int x = 0; x < picEnemies.Length; x++) {
 
@@ -962,8 +697,6 @@ namespace LodeRunner
             picPlayer.Tag = null;
             picPlayer.Visible = false;
 
-            this.Refresh();
-
         }
 
         private void cmdReset_Click(object sender, EventArgs e) {
@@ -972,6 +705,7 @@ namespace LodeRunner
 
                 LevelDefinition levelDefinition = (LevelDefinition)lstLevels.SelectedItems[0].Tag;
                 loadLevel(levelDefinition);
+                lstLevels.Select();
 
             }
 
@@ -1049,20 +783,22 @@ namespace LodeRunner
             CoordinateSet playerCoords = levelDefinition.Player;
             picPlayer.Visible = false;
 
-            if (picPlayer.Tag != null) {
+            if (playerCoords != null) {
 
+                picPlayer.Parent = pictureBoxes[playerCoords.Y, playerCoords.X];
+                picPlayer.BackColor = Color.Transparent;
+                picPlayer.Location = new System.Drawing.Point(0, 0);
+                picPlayer.Visible = true;
                 picPlayer.Tag = playerCoords;
 
-                if (playerCoords.X >= 0) {
-
-                    picPlayer.Parent = pictureBoxes[playerCoords.Y, playerCoords.X];
-                    picPlayer.BackColor = Color.Transparent;
-                    picPlayer.Location = new System.Drawing.Point(0, 0);
-                    picPlayer.Visible = true;
-
-                }
-
             }
+
+
+            // Enable buttons ..
+
+            cmdSave.Enabled = true;
+            cmdReset.Enabled = true;
+            cmdClear.Enabled = true;
 
         }
 
@@ -1109,10 +845,256 @@ namespace LodeRunner
                 }
 
                 levelDefinition.Player = (CoordinateSet)picPlayer.Tag;
+                validate(lstLevels.SelectedItems[0], levelDefinition);
+                lstLevels.Select();
 
             }
 
-            this.Refresh();
+        }
+
+        private void cmdLevelAdd_Click(object sender, EventArgs e) {
+
+            ListViewItem item = new ListViewItem();
+            item.Text = "level" + lstLevels.Items.Count;
+            item.Tag = new LevelDefinition();
+            item.ImageIndex = 1;
+            lstLevels.Items.Add(item);
+            lstLevels.SelectedItems.Clear();
+
+            item.Selected = true;
+            item.EnsureVisible();
+
+            validate(item, (LevelDefinition)item.Tag);
+
+        }
+
+        private void validate(ListViewItem item, LevelDefinition levelDefinition) {
+
+            bool inError = false;
+            ArrayList lstErrors = new ArrayList();
+
+            if (levelDefinition.Player == null) { inError = true; lstErrors.Add("A player must be placed on the level."); }
+
+            if (levelDefinition.ReentryPoints.Count < 4) { inError = true; lstErrors.Add("Each level must contain exactly four re-entry points."); }
+            if (levelDefinition.Enemies.Count == 0) { inError = true; lstErrors.Add("At least one enemy should be placed in a level."); }
+            if (getCountOfLevelElements(levelDefinition, LevelElement.Gold) == 0) { inError = true; lstErrors.Add("At least one gold piece should be placed in a level."); }
+            if (getCountOfLevelElements(levelDefinition, LevelElement.Level_Ladder) == 0) { inError = true; lstErrors.Add("At least one level ladder should be placed in a level."); }
+
+
+            if (inError) {
+
+                lstLevels.ShowItemToolTips = true;
+                item.ImageIndex = 1;
+
+                String toolTip = "";
+                foreach (String error in lstErrors) {
+                    toolTip = toolTip + error + "\n";
+                }
+
+                item.ToolTipText = toolTip;
+
+            }
+            else {
+
+                lstLevels.ShowItemToolTips = false;
+                item.ImageIndex = 0;
+
+            }
+
+        }
+
+        private void cmdLevelDelete_Click(object sender, EventArgs e) {
+
+            DialogResult result = MessageBox.Show("Delete selected the level?", "Confirm Deletion", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+            
+            if (result == DialogResult.OK) {
+
+                if (lstLevels.SelectedItems.Count > 0) {
+                    lstLevels.SelectedItems[0].Remove();
+                    clearLevel();
+                    cmdClear.Enabled = false;
+                    cmdReset.Enabled = false;
+                    cmdSave.Enabled = false;
+                }
+
+            }
+
+            if (lstLevels.Items.Count == 0) { mnuSave.Enabled = false; mnuSaveAs.Enabled = false; }
+
+        }
+
+
+        private void dgExport_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e) {
+            e.Control.KeyPress -= new KeyPressEventHandler(colNumberOfGames_KeyPress);
+            if (dgExport.CurrentCell.ColumnIndex == 1) //Desired Column
+            {
+                TextBox tb = e.Control as TextBox;
+                if (tb != null) {
+                    tb.KeyPress += new KeyPressEventHandler(colNumberOfGames_KeyPress);
+                }
+            }
+        }
+        
+        private void colNumberOfGames_KeyPress(object sender, KeyPressEventArgs e) {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) {
+                e.Handled = true;
+            }
+        }
+
+        private void dgExport_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e) {
+            e.Row.Cells[0].Value = dgExport.Rows.Count;
+        }
+
+        private void dgExport_UserDeletedRow(object sender, DataGridViewRowEventArgs e) {
+
+            Int16 rowId = 1;
+            for (Int16 x = 0; x < dgExport.Rows.Count - 1; x++) {
+                DataGridViewRow row = dgExport.Rows[x];
+                row.Cells[0].Value = rowId;
+                rowId++;
+            }
+
+        }
+
+        private void tabMain_SelectedIndexChanged(object sender, EventArgs e) {
+
+            if (tabMain.SelectedIndex == 0) {
+                lstLevels.Select();
+            }
+        }
+
+        private void writeFile(String filename) {
+
+            using (StreamWriter writer = new StreamWriter(filename)) {
+
+                writer.Write("#pragma once\n\n#include \"../ utils / Arduboy2Ext.h\"\n#include \"../utils/Utils.h\"\n#include \"../utils/Enums.h\"\n\n");
+                writer.Write("#define GAME_NUMBER 1\n");
+                writer.Write("#define NUMBER_OF_GAMES " + (dgExport.Rows.Count - 1) + "\n\n");
+
+                int offset = 0;
+                for (int x = 0; x < (dgExport.Rows.Count - 1); x++) {
+
+                    DataGridViewRow dgRow = dgExport.Rows[x];
+                    writer.Write("#if GAME_NUMBER == " + (x + 1) + "\n");
+                    writer.Write("  #define LEVEL_COUNT         " + dgRow.Cells[1].Value + "\n");
+                    writer.Write("  #define LEVEL_OFFSET        " + offset + "\n");
+                    writer.Write("#endif\n");
+
+                    offset = offset + Convert.ToInt16(dgRow.Cells[1].Value);
+
+                }
+
+                writer.Write("\n\n");
+
+                for (Int16 x = 0; x < lstLevels.Items.Count; x++) {
+
+                    ListViewItem item = lstLevels.Items[x];
+                    LevelDefinition levelDefinition = (LevelDefinition)item.Tag;
+                    writer.Write(LevelUtils.getLevelText(item, levelDefinition, x));
+
+                }
+
+                offset = 0;
+                for (int y = 0; y < (dgExport.Rows.Count - 1); y++) {
+
+                    DataGridViewRow dgRow = dgExport.Rows[y];
+                    int maxPerLevel = Convert.ToInt16(dgRow.Cells[1].Value);
+
+                    writer.Write("#if GAME_NUMBER == " + (y + 1) + "\n");
+                    writer.Write("const uint8_t *levels[] =    { nullptr, \n");
+                    writer.Write("                               ");
+
+                    int z = 0;
+                    for (int x = offset; x < offset + maxPerLevel; x++) {
+
+                        z++;
+                        writer.Write(lstLevels.Items[x].Text + ", ");
+
+                        if (z % 10 == 0) {
+                            writer.Write("\n                               ");
+                        }
+
+                    }
+                    writer.Write("};\n#endif\n");
+
+                    offset = offset + Convert.ToInt16(dgRow.Cells[1].Value);
+
+                }
+
+            }
+
+        }
+
+        private void cmdLevelUp_Click(object sender, EventArgs e) {
+
+            if (lstLevels.SelectedItems[0].Index > 0) {
+
+                int index = lstLevels.SelectedItems[0].Index - 1;
+                ListViewItem lvi = lstLevels.SelectedItems[0];
+                lstLevels.Items.RemoveAt(lvi.Index);
+                lstLevels.Items.Insert(index, lvi);
+
+            }
+
+        }
+
+        private void cmdLevelDown_Click(object sender, EventArgs e) {
+
+            if (lstLevels.SelectedItems[0].Index < lstLevels.Items.Count) {
+
+                int index = lstLevels.SelectedItems[0].Index + 1;
+                ListViewItem lvi = lstLevels.SelectedItems[0];
+
+                lstLevels.Items.RemoveAt(lvi.Index);
+                lstLevels.Items.Insert(index, lvi);
+
+            }
+
+        }
+
+        private void mnuSave_Click(object sender, EventArgs e) {
+
+            int numberOfLevels = 0;
+
+
+            for (int y = 0; y < (dgExport.Rows.Count - 1); y++) {
+
+                DataGridViewRow dgRow = dgExport.Rows[y];
+                int maxPerLevel = Convert.ToInt16(dgRow.Cells[1].Value);
+
+                numberOfLevels = numberOfLevels + maxPerLevel;
+
+            }
+
+            if (lstLevels.Items.Count != numberOfLevels) {
+
+                MessageBox.Show("The overall number of levels does not match the game breakdown.\n\nThe game breakdown can bet set on the 'Export' tab.", "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+
+            }
+
+            writeFile(dgOpenMapData.FileName);
+
+            MessageBox.Show("Level data saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+
+        private void mnuSaveAs_Click(object sender, EventArgs e) {
+
+            dgSaveMapData.ShowDialog();
+
+            // If the file name is not an empty string open it for saving.  
+            if (dgSaveMapData.FileName != "") {
+
+                const string userRoot = "HKEY_CURRENT_USER";
+                const string subkey = "LodeRunner";
+                const string keyName = userRoot + "\\" + subkey;
+                Registry.SetValue(keyName, "PathName", Path.GetDirectoryName(dgSaveMapData.FileName));
+                writeFile(dgSaveMapData.FileName);
+
+                MessageBox.Show("Level data saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            }
 
         }
 
