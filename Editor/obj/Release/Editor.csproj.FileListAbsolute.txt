@@ -1,0 +1,9 @@
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\bin\Release\LodeRunner.exe.config
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\bin\Release\LodeRunner.exe
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\bin\Release\LodeRunner.pdb
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\obj\Release\LodeRunner.frmMain.resources
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\obj\Release\LodeRunner.Properties.Resources.resources
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\obj\Release\Editor.csproj.GenerateResource.Cache
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\obj\Release\Editor.csproj.CoreCompileInputs.cache
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\obj\Release\LodeRunner.exe
+C:\Users\simon.holmes\Documents\GitHub\LodeRunnerEditor\Editor\obj\Release\LodeRunner.pdb

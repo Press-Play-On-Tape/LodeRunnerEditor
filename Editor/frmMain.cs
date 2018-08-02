@@ -967,7 +967,7 @@ namespace LodeRunner
 
             using (StreamWriter writer = new StreamWriter(filename)) {
 
-                writer.Write("#pragma once\n\n#include \"../ utils / Arduboy2Ext.h\"\n#include \"../utils/Utils.h\"\n#include \"../utils/Enums.h\"\n\n");
+                writer.Write("#pragma once\n\n#include \"../utils/Arduboy2Ext.h\"\n#include \"../utils/Utils.h\"\n#include \"../utils/Enums.h\"\n\n");
                 writer.Write("#define GAME_NUMBER 1\n");
                 writer.Write("#define NUMBER_OF_GAMES " + (dgExport.Rows.Count - 1) + "\n\n");
 
