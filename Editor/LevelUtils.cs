@@ -46,8 +46,9 @@ namespace LodeRunner {
 
                     if (x != 0 || y != 0) {
 
-                        if ((levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
-
+                        //                        if ((levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
+                        if ((levelDefinition.Grid[y, x] == LevelElement.Level_Ladder && currentCell != LevelElement.Blank) || 
+                            (levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
                             ret.Append("0x" + (((int)currentCell * 32) + iCount + 1).ToString("X2"));
                             ret.Append(", ");
                             iCount = 0;
@@ -90,7 +91,9 @@ namespace LodeRunner {
 
                     if (x != 0 || y != 0) {
 
-                        if ((levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
+                        //                        if ((levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
+                        if ((levelDefinition.Grid[y, x] == LevelElement.Level_Ladder && currentCell != LevelElement.Blank) ||
+                            (levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
 
                             ret.Append("0x" + (((int)currentCell * 32) + iCount + 1).ToString("X2"));
                             ret.Append(", ");
