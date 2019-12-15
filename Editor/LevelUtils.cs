@@ -49,10 +49,19 @@ namespace LodeRunner {
                         //                        if ((levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
                         if ((levelDefinition.Grid[y, x] == LevelElement.Level_Ladder && currentCell != LevelElement.Blank) || 
                             (levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
+
+                            if (currentCell == LevelElement.Level_Ladder) {
+                                ret.Append("0x" + (((int)LevelElement.Blank * 32) + iCount + 1).ToString("X2"));
+                                ret.Append(", ");
+                                iCount = 0;
+                                currentCell = levelDefinition.Grid[y, x];
+                            }
+                            else {
                             ret.Append("0x" + (((int)currentCell * 32) + iCount + 1).ToString("X2"));
                             ret.Append(", ");
                             iCount = 0;
                             currentCell = levelDefinition.Grid[y, x];
+                            }
 
                         }
                         else {
@@ -95,10 +104,20 @@ namespace LodeRunner {
                         if ((levelDefinition.Grid[y, x] == LevelElement.Level_Ladder && currentCell != LevelElement.Blank) ||
                             (levelDefinition.Grid[y, x] != LevelElement.Level_Ladder && levelDefinition.Grid[y, x] != currentCell) || iCount == 30) {
 
+                            if (currentCell == LevelElement.Level_Ladder) {
+                                ret.Append("0x" + (((int)LevelElement.Blank * 32) + iCount + 1).ToString("X2"));
+                                ret.Append(", ");
+                                iCount = 0;
+                                currentCell = levelDefinition.Grid[y, x];
+                            }
+                            else {
+
                             ret.Append("0x" + (((int)currentCell * 32) + iCount + 1).ToString("X2"));
                             ret.Append(", ");
                             iCount = 0;
                             currentCell = levelDefinition.Grid[y, x];
+
+                            }
 
                         }
                         else {
